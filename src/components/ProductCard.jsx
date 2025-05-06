@@ -85,10 +85,12 @@ const ProductCard = ({ product, className }) => {
 
   // Function to determine which badge to show (prioritize in this order)
   const getBadge = () => {
-    if (product.isNew) {
+    if (product.isNew || product.is_new) {
       return { label: "New", bgColor: "bg-[#2196f3]" };
-    } else if (product.originalPrice) {
-      const discount = calculateDiscount(product.originalPrice, product.price);
+    } else if (product.originalPrice || product.original_price) {
+      const originalPrice = parseFloat(product.originalPrice || product.original_price);
+      const currentPrice = parseFloat(product.price);
+      const discount = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
       return { label: `${discount}% OFF`, bgColor: "bg-[#e91e63]" };
     } else if (product.isBudget) {
       return { label: "Budget", bgColor: "bg-[#4caf50]" };
@@ -108,7 +110,10 @@ const ProductCard = ({ product, className }) => {
             src={getProductImageUrl(product)}
             alt={product.name}
             className="object-cover w-full h-full"
-            crossOrigin="anonymous"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/placeholder.svg';
+            }}
           />
           
           {/* Heart/Favorite button */}
@@ -171,15 +176,15 @@ const ProductCard = ({ product, className }) => {
         
         <div className="flex items-center justify-between">
           <div>
-            {product.originalPrice ? (
+            {product.originalPrice || product.original_price ? (
               <div className="flex flex-col">
-                <span className="font-bold text-sm">KSh {product.price.toFixed(2)}</span>
+                <span className="font-bold text-sm">KSh {parseFloat(product.price).toFixed(2)}</span>
                 <span className="text-xs text-gray-500 line-through">
-                  KSh {product.originalPrice.toFixed(2)}
+                  KSh {parseFloat(product.originalPrice || product.original_price).toFixed(2)}
                 </span>
               </div>
             ) : (
-              <span className="font-bold text-sm">KSh {product.price.toFixed(2)}</span>
+              <span className="font-bold text-sm">KSh {parseFloat(product.price).toFixed(2)}</span>
             )}
           </div>
           

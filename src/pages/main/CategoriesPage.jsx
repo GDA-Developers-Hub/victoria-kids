@@ -1,22 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { categoryService } from '../../utils/categoryService';
+import { productService } from '../../utils/productService';
 
 /**
  * Categories page component displaying all product categories fetched from API
  */
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       setLoading(true);
       setError(null);
       try {
+        // Fetch categories from API
         const response = await categoryService.getCategories();
-        setCategories(response.categories || []);
+        const allCategories = response.categories || [];
+        setCategories(allCategories);
+        
+        // Get products for each category
+        const productsMap = {};
+        
+        // Get all products once and then filter by category
+        const allProductsResponse = await productService.getProducts({
+          limit: 100 // Get enough products to cover all categories
+        });
+        const allProducts = allProductsResponse?.data || [];
+        
+        // Group products by category
+        allCategories.forEach(category => {
+          const categoryName = category.name.toLowerCase();
+          const productsInCategory = allProducts.filter(product => 
+            (product.category_name || '').toLowerCase() === categoryName
+          );
+          productsMap[category.id] = productsInCategory.slice(0, 4); // Show up to 4 products per category
+        });
+        
+        setCategoryProducts(productsMap);
       } catch (err) {
         console.error('Error fetching categories:', err);
         setError('Failed to load categories. Please try again.');
@@ -24,7 +48,7 @@ const CategoriesPage = () => {
         setLoading(false);
       }
     };
-    loadCategories();
+    loadData();
   }, []);
 
   // Placeholder for popular collections - replace with dynamic data if needed
@@ -63,7 +87,7 @@ const CategoriesPage = () => {
           categories.slice(0, 3).map((category) => (
             <Link
               key={category.id}
-              to={`/products?category=${category.id}`}
+              to={`/products?category=${category.slug}`}
               className="group relative overflow-hidden rounded-lg h-64 flex items-end justify-start text-left bg-cover bg-center"
               style={{ backgroundImage: `url(${category.image || '/placeholder.svg'})` }}
             >
@@ -88,7 +112,7 @@ const CategoriesPage = () => {
           {categories.map((category) => (
             <Link
               key={category.id}
-              to={`/products?category=${category.id}`}
+              to={`/products?category=${category.slug}`}
               className="group block overflow-hidden rounded-lg border transition-colors hover:border-primary"
             >
               <div className="relative aspect-square overflow-hidden">
@@ -96,11 +120,15 @@ const CategoriesPage = () => {
                   src={category.image || '/placeholder.svg'}
                   alt={category.name}
                   className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/placeholder.svg';
+                  }}
                 />
               </div>
               <div className="p-4">
                 <h3 className="font-medium group-hover:text-[#e91e63]">{category.name}</h3>
-                {/* Product count removed as it might not be available from API */}
+                <p className="text-sm text-gray-500 mt-1">{categoryProducts[category.id]?.length || 0} products</p>
               </div>
             </Link>
           ))}
@@ -112,12 +140,7 @@ const CategoriesPage = () => {
       {/* Popular Collections */}
       <h2 className="text-2xl font-bold mt-12 mb-6">Popular Collections</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {[
-          { name: 'New Arrivals', image: '/collections/new-arrivals.jpg', url: '/products?filter=new' },
-          { name: 'Budget Picks', image: '/collections/budget-picks.jpg', url: '/products?filter=budget' },
-          { name: 'Luxury Items', image: '/collections/luxury-items.jpg', url: '/products?filter=luxury' },
-          { name: 'On Sale', image: '/collections/on-sale.jpg', url: '/products?filter=sale' }
-        ].map((collection, index) => (
+        {popularCollections.map((collection, index) => (
           <Link
             key={index}
             to={collection.url}
@@ -128,6 +151,10 @@ const CategoriesPage = () => {
                 src={collection.image || '/placeholder.svg'}
                 alt={collection.name}
                 className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/placeholder.svg';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
                 <h3 className="text-white font-medium">{collection.name}</h3>
@@ -162,6 +189,10 @@ const CategoriesPage = () => {
               src="/seasonal-baby.jpg" 
               alt="Seasonal baby products" 
               className="rounded-lg shadow-md"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/placeholder.svg';
+              }}
             />
           </div>
         </div>

@@ -31,8 +31,9 @@ export const categoryService = {
   // Get all categories
   getCategories: async () => {
     try {
-      const response = await api.categories.getAll();
-      return response;
+      const response = await api.get('/categories');
+      // The API returns an array directly, so wrap it in an object
+      return { categories: response || [] };
     } catch (error) {
       console.error('Error fetching categories:', error);
       
@@ -42,15 +43,15 @@ export const categoryService = {
         return { categories: mockCategories };
       }
       
-      throw error;
+      return { categories: [] };
     }
   },
 
   // Get featured categories
   getFeaturedCategories: async () => {
     try {
-      const response = await api.categories.getFeatured();
-      return response;
+      const response = await api.get('/categories/featured');
+      return { categories: response || [] };
     } catch (error) {
       console.error('Error fetching featured categories:', error);
       
@@ -61,7 +62,7 @@ export const categoryService = {
         return { categories: featuredCategories };
       }
       
-      throw error;
+      return { categories: [] };
     }
   },
 
@@ -70,8 +71,9 @@ export const categoryService = {
     if (!id) return { category: null };
     
     try {
-      const response = await api.categories.getById(id);
-      return response;
+      const categories = await api.get('/categories');
+      const category = categories.find(c => c.id === id);
+      return { category };
     } catch (error) {
       console.error(`Error fetching category with ID ${id}:`, error);
       
@@ -82,7 +84,7 @@ export const categoryService = {
         return { category };
       }
       
-      throw error;
+      return { category: null };
     }
   },
 
@@ -91,8 +93,9 @@ export const categoryService = {
     if (!slug) return { category: null };
     
     try {
-      const response = await api.categories.getBySlug(slug);
-      return response;
+      const categories = await api.get('/categories');
+      const category = categories.find(c => c.slug === slug);
+      return { category };
     } catch (error) {
       console.error(`Error fetching category with slug ${slug}:`, error);
       
@@ -103,14 +106,49 @@ export const categoryService = {
         return { category };
       }
       
-      throw error;
+      return { category: null };
+    }
+  },
+
+  // Get products by category slug
+  getProductsByCategory: async (slug) => {
+    if (!slug) return { products: [] };
+    
+    try {
+      // Use the categories API endpoint to get products by category
+      const response = await api.categories.getProducts(slug);
+      
+      // Validate and normalize response data
+      if (!response || !response.products) {
+        console.warn('Invalid response format from category products API');
+        return { products: [] };
+      }
+      
+      // Ensure products have valid structure and required fields
+      const validatedProducts = (response.products || []).map(product => ({
+        id: product.id || Math.random().toString(36).substring(2),
+        name: product.name || 'Unnamed Product',
+        description: product.description || '',
+        price: parseFloat(product.price || 0),
+        originalPrice: product.originalPrice || product.original_price || null,
+        stock: parseInt(product.stock || 0, 10),
+        images: Array.isArray(product.images) ? product.images : 
+               (product.image ? [product.image] : []),
+        category: product.category_name || product.category || '',
+        discount: product.discount || 0
+      }));
+      
+      return { products: validatedProducts };
+    } catch (error) {
+      console.error(`Error fetching products for category slug ${slug}:`, error);
+      return { products: [] };
     }
   },
 
   // Create a new category (admin function)
   createCategory: async (categoryData) => {
     try {
-      const response = await api.categories.create(categoryData);
+      const response = await api.post('/categories', categoryData);
       toast.success('Category created successfully');
       return response;
     } catch (error) {
@@ -126,7 +164,7 @@ export const categoryService = {
     if (!id) throw new Error('Category ID is required');
     
     try {
-      const response = await api.categories.update(id, categoryData);
+      const response = await api.put(`/categories/${id}`, categoryData);
       toast.success('Category updated successfully');
       return response;
     } catch (error) {
@@ -142,7 +180,7 @@ export const categoryService = {
     if (!id) throw new Error('Category ID is required');
     
     try {
-      const response = await api.categories.delete(id);
+      const response = await api.delete(`/categories/${id}`);
       toast.success('Category deleted successfully');
       return response;
     } catch (error) {

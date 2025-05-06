@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { authService } from '../../utils/authService';
+import { toast } from '../../utils/api';
 
 /**
  * Login page component for user authentication
@@ -39,9 +40,14 @@ const LoginPage = () => {
     setError('');
     
     try {
-      await authService.login(formData.email, formData.password);
-      navigate(redirectTo);
+      const user = await authService.login(formData.email, formData.password);
+      
+      if (user) {
+        toast.success(`Welcome back, ${user.name}!`);
+        navigate(redirectTo);
+      }
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message || 'Failed to login. Please check your credentials.');
     } finally {
       setIsLoading(false);

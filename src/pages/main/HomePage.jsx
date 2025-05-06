@@ -5,7 +5,10 @@ import ProductCard from '../../components/ProductCard';
 import { productService } from '../../utils/productService';
 import { categoryService } from '../../utils/categoryService';
 import { Badge } from '../../components/ui/badge';
-
+import banner from '../../assets/baby1.jpg';
+import banner2 from '../../assets/banner1.jpg';
+import banner3 from '../../assets/banner2.avif';
+import banner4 from '../../assets/pump.jpg';
 /**
  * Home page component displaying hero section, featured products, and categories
  */
@@ -29,65 +32,57 @@ const HomePage = () => {
         const allCategories = categoriesResponse.categories || [];
         setCategories(allCategories);
         
-        // Set active category to first category if available
-        if (allCategories.length > 0) {
-          setActiveCategory(allCategories[0].slug);
-        }
+        // Set active category to "all" by default
+        setActiveCategory('all');
         
-        // Load featured products
-        const featured = await productService.getFeaturedProducts(8);
-        setFeaturedProducts(featured);
+        // Load all products from admin/products endpoint
+        const allProductsResponse = await productService.getProducts({
+          limit: 30 // Get enough products to show in various sections
+        });
         
-        // Load products by category (for top 4 categories)
-        const categoryProducts = {};
-        const topCategories = allCategories.slice(0, 4);
+        const allProducts = allProductsResponse?.data || [];
         
-        await Promise.all(topCategories.map(async (category) => {
-          try {
-            // Use the API endpoint to get products by category
-            const response = await fetch(`http://localhost:5000/api/categories/${category.slug}/products`);
-            
-            if (!response.ok) {
-              throw new Error(`Failed to fetch products for category ${category.name}`);
-            }
-            
-            const data = await response.json();
-            categoryProducts[category.slug] = data.products || [];
-          } catch (error) {
-            console.error(`Error loading products for category ${category.name}:`, error);
-            categoryProducts[category.slug] = [];
-          }
-        }));
+        // Use these products as featured products
+        setFeaturedProducts(allProducts);
+        
+        // Create a map of products by category
+        const categoryProducts = { all: allProducts };
+        
+        // For each category, filter the products that belong to it
+        allCategories.forEach(category => {
+          const categoryName = category.name.toLowerCase();
+          const productsInCategory = allProducts.filter(product => 
+            (product.category_name || '').toLowerCase() === categoryName
+          );
+          categoryProducts[category.slug] = productsInCategory;
+        });
         
         setProductsByCategory(categoryProducts);
         
-        // Load flash deals (products with discounts)
-        const productsResponse = await productService.getProducts({ 
-          sort: 'originalPrice',
-          order: 'desc',
-          limit: 5
-        });
-        setFlashDeals(productsResponse.data.filter(p => p.originalPrice) || []);
+        // Filter products to get flash deals (products with discounts)
+        const discountedProducts = allProducts.filter(p => p.original_price || p.originalPrice);
+        setFlashDeals(discountedProducts.slice(0, 5));
         
-        // Load budget picks
-        const budgetResponse = await productService.getProducts({ 
-          sort: 'price',
-          order: 'asc',
-          limit: 5
+        // Sort products by price for budget picks
+        const sortedByPrice = [...allProducts].sort((a, b) => {
+          const priceA = parseFloat(a.price);
+          const priceB = parseFloat(b.price);
+          return priceA - priceB;
         });
-        setBudgetPicks(budgetResponse.data || []);
+        setBudgetPicks(sortedByPrice.slice(0, 5));
         
-        // Load new arrivals
-        const newArrivalsResponse = await productService.getProducts({ 
-          sort: 'id',
-          order: 'desc',
-          limit: 5
-        });
-        setNewArrivals(newArrivalsResponse.data || []);
+        // Filter new arrivals (products marked as new or recent)
+        const newProducts = allProducts.filter(p => p.is_new || p.isNew).slice(0, 5);
+        // If not enough products marked as new, use the most recent ones by ID
+        if (newProducts.length < 5) {
+          const sortedById = [...allProducts].sort((a, b) => b.id - a.id);
+          const additional = sortedById.filter(p => !newProducts.some(np => np.id === p.id));
+          newProducts.push(...additional.slice(0, 5 - newProducts.length));
+        }
+        setNewArrivals(newProducts);
         
       } catch (error) {
         console.error('Error loading homepage data:', error);
-        toast.error('Failed to load homepage data: ' + (error.message || 'Unknown error'));
       } finally {
         setIsLoading(false);
       }
@@ -147,7 +142,7 @@ const HomePage = () => {
                     >
                       <div className="w-8 h-8 rounded-md overflow-hidden mr-3">
                         <img 
-                          src={category.image || `/categories/${category.slug}.jpg`}
+                          src={category.image || `/categories/${category.slug}.jpg`} 
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           onError={(e) => {
@@ -170,7 +165,7 @@ const HomePage = () => {
               </li>
             </ul>
           </div>
-          
+
           {/* Main Content */}
           <div className="lg:w-4/5">
             {/* Mobile Search Bar */}
@@ -205,16 +200,16 @@ const HomePage = () => {
                 <div className="relative">
                   <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-pink-500/80 to-transparent z-10"></div>
                   <div className="relative z-20 p-6 flex flex-col justify-center h-full">
-                    <Badge className="mb-2 bg-white text-pink-500 hover:bg-white w-fit">SUMMER SALE</Badge>
+                  <Badge className="mb-2 bg-white text-black hover:bg-white w-fit">SUMMER SALE</Badge>
                     <h1 className="text-2xl font-bold text-white mb-2">Quality Products for Your<br />Little Ones</h1>
                     <p className="text-white text-opacity-90 mb-4 text-sm">Up to 40% off on selected baby essentials. Limited time offer!</p>
-                    <Button className="bg-white text-pink-500 hover:bg-gray-100 w-fit" asChild>
-                      <Link to="/products">SHOP NOW</Link>
-                    </Button>
-                  </div>
-                  <img 
-                    src="/banner.jpg" 
-                    alt="Baby products showcase" 
+                  <Button className="bg-white text-black hover:bg-gray-100 w-fit" asChild>
+                    <Link to="/products">SHOP NOW</Link>
+                  </Button>
+                </div>
+                <img 
+                  src={banner}
+                  alt="Baby products showcase" 
                     className="absolute top-0 right-0 h-full object-cover object-right w-1/2"
                   />
                 </div>
@@ -255,16 +250,16 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+              </div>
+            </div>
 
         {/* Product Sections - Full Width */}
         <div className="mt-8">
-          {/* All Products Section */}
+            {/* All Products Section */}
           <div className="mb-8">
-            <SectionTitle title="All Products" linkTo="/products" />
-            <div className="overflow-x-auto">
-              <div className="flex space-x-2 mb-4">
+              <SectionTitle title="All Products" linkTo="/products" />
+              <div className="overflow-x-auto">
+                <div className="flex space-x-2 mb-4">
                 <Button 
                   variant={activeCategory === 'all' ? "default" : "outline"} 
                   size="sm" 
@@ -273,42 +268,42 @@ const HomePage = () => {
                 >
                   All
                 </Button>
-                {categories.slice(0, 7).map((category) => (
-                  <Button 
-                    key={category.id} 
+                  {categories.slice(0, 7).map((category) => (
+                    <Button 
+                      key={category.id} 
                     variant={activeCategory === category.slug ? "default" : "outline"}
-                    size="sm"
-                    className="whitespace-nowrap"
+                      size="sm"
+                      className="whitespace-nowrap bg-gray-200"
                     onClick={() => setActiveCategory(category.slug)}
-                  >
+                    >
                     {category.name}
-                  </Button>
-                ))}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {isLoading ? (
+              {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(10).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
+                  {Array(10).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
                 {activeCategory === 'all' ? (
                   featuredProducts.length > 0 ? (
                     featuredProducts.slice(0, 10).map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} />
                     ))
                   ) : (
                     <div className="col-span-full text-center py-8">
                       <p className="text-gray-500">No products found</p>
-                    </div>
+                </div>
                   )
                 ) : (
                   productsByCategory[activeCategory] && productsByCategory[activeCategory].length > 0 ? (
                     productsByCategory[activeCategory].slice(0, 10).map((product) => (
-                      <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} />
                     ))
                   ) : (
                     <div className="col-span-full text-center py-8">
@@ -316,82 +311,82 @@ const HomePage = () => {
                     </div>
                   )
                 )}
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
 
-          {/* Promotional Banners */}
+            {/* Promotional Banners */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            {/* Educational Toys Banner */}
+              {/* Educational Toys Banner */}
             <div className="bg-green-100 rounded-lg overflow-hidden relative">
               <div className="relative z-10 p-6">
                 <h3 className="text-2xl font-bold mb-2">Educational Toys</h3>
                 <p className="mb-4">Develop your baby's skills</p>
                 <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-green-600 border-white" asChild>
-                  <Link to="/categories/toys">Shop Now</Link>
-                </Button>
-              </div>
+                    <Link to="/categories/toys">Shop Now</Link>
+                  </Button>
+                </div>
               <img 
-                src="/categories/toys.jpg" 
+                src={banner2}
                 alt="Educational Toys" 
                 className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
               />
-            </div>
-            
-            {/* Organic Clothing Banner */}
+              </div>
+              
+              {/* Organic Clothing Banner */}
             <div className="bg-blue-100 rounded-lg overflow-hidden relative">
               <div className="relative z-10 p-6">
                 <h3 className="text-2xl font-bold mb-2">Organic Clothing</h3>
                 <p className="mb-4">Gentle on baby's skin</p>
                 <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-blue-600 border-white" asChild>
-                  <Link to="/categories/clothing">Shop Now</Link>
-                </Button>
-              </div>
+                    <Link to="/categories/clothing">Shop Now</Link>
+                  </Button>
+                </div>
               <img 
-                src="/categories/clothing.jpg" 
+                src={banner3}
                 alt="Organic Clothing" 
                 className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
               />
+              </div>
             </div>
-          </div>
 
           {/* Flash Deals Section */}
           <div className="mb-8">
             <SectionTitle title="Flash Deals" linkTo="/products?discount=true" />
-            
-            {isLoading ? (
+              
+              {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(5).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
+                  {Array(5).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
                 {flashDeals.slice(0, 5).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </div>
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
+            </div>
 
-          {/* New Arrivals Section */}
+            {/* New Arrivals Section */}
           <div className="mb-8">
             <SectionTitle title="New Arrivals" linkTo="/products?sort=newest" />
-            
-            {isLoading ? (
+              
+              {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(5).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
+                  {Array(5).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {newArrivals.slice(0, 5).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </div>
+                  {newArrivals.slice(0, 5).map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
+            </div>
 
           {/* Promotional Banners */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -405,12 +400,12 @@ const HomePage = () => {
                 </Button>
               </div>
               <img 
-                src="/categories/toys.jpg" 
+                src={banner}
                 alt="Educational Toys" 
                 className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
               />
             </div>
-            
+
             {/* Organic Clothing Banner */}
             <div className="bg-blue-100 rounded-lg overflow-hidden relative">
               <div className="relative z-10 p-6">
@@ -421,7 +416,7 @@ const HomePage = () => {
                 </Button>
               </div>
               <img 
-                src="/categories/clothing.jpg" 
+                src={banner3}
                 alt="Organic Clothing" 
                 className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
               />

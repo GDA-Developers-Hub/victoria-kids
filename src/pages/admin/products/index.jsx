@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import adminService from "../../../utils/adminService";
 import { toast } from "../../../utils/api";
 import { getProductImageUrl } from "../../../utils/imageUtils";
+import { Link } from "react-router-dom";
 
 function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -80,8 +81,8 @@ function AdminProductsPage() {
               <span className="sr-only">Search</span>
             </button>
           </form>
-          <a 
-            href="/admin/products/new" 
+          <Link 
+            to="/admin/products/new" 
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#e91e63] text-primary-foreground hover:bg-[#c2185b] h-10 px-4 py-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-4 w-4">
@@ -89,7 +90,7 @@ function AdminProductsPage() {
               <path d="M5 12h14"></path>
             </svg>
             Add Product
-          </a>
+          </Link>
         </div>
       </div>
 

@@ -13,13 +13,31 @@ const apiClient = axios.create({
   timeout: 10000, // 10 seconds timeout
 });
 
+// List of authentication endpoints that shouldn't have auth token headers
+const authEndpoints = [
+  '/auth/login',
+  '/auth/admin/login',
+  '/auth/register',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+  '/auth/verify-email'
+];
+
 // Request interceptor for adding auth token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Don't add authorization headers to auth endpoints
+    const isAuthEndpoint = authEndpoints.some(endpoint => 
+      config.url && config.url.includes(endpoint)
+    );
+    
+    if (!isAuthEndpoint) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
+    
     return config;
   },
   (error) => {
@@ -38,15 +56,22 @@ apiClient.interceptors.response.use(
       // Clear local storage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('refreshToken');
       
-      // Redirect to login
-      if (window.location.pathname.includes('/admin')) {
-        window.location.href = '/admin/login';
-      } else {
-        window.location.href = '/login';
+      // Only redirect if we're not already on a login page
+      const currentPath = window.location.pathname;
+      const isLoginPage = currentPath.includes('/login') || currentPath.includes('/admin/login');
+      
+      if (!isLoginPage) {
+        // Redirect to login
+        if (currentPath.includes('/admin')) {
+          window.location.href = '/admin/login';
+        } else {
+          window.location.href = '/login';
+        }
+        
+        toast.error('Your session has expired. Please log in again.');
       }
-      
-      toast.error('Your session has expired. Please log in again.');
     }
     
     // Handle server errors
@@ -82,20 +107,20 @@ export const api = {
   
   // Product endpoints
   products: {
-    getAll: (params) => apiClient.get('/products', { params }),
-    getById: (id) => apiClient.get(`/products/${id}`),
+    getAll: (params) => apiClient.get('/admin/products', { params }),
+    getById: (id) => apiClient.get(`/products/${String(id)}`),
     getByCategory: (categoryName, params) => 
       apiClient.get(`/products/category/${categoryName}`, { params }),
-    getRelated: (id) => apiClient.get(`/products/${id}/related`),
+    getRelated: (id) => apiClient.get(`/products/${String(id)}/related`),
     getFeatured: () => apiClient.get('/products/featured'),
     search: (query) => apiClient.get(`/products/search?q=${query}`),
     
     // Admin product operations
-    create: (productData) => apiClient.post('/admin/products', productData),
-    update: (id, productData) => apiClient.put(`/admin/products/${id}`, productData),
-    delete: (id) => apiClient.delete(`/admin/products/${id}`),
+    create: (productData) => apiClient.post('/products', productData),
+    update: (id, productData) => apiClient.put(`/products/${String(id)}`, productData),
+    delete: (id) => apiClient.delete(`/products/${String(id)}`),
     uploadImage: (productId, formData) => {
-      return apiClient.post(`/admin/products/${productId}/images`, formData, {
+      return apiClient.post(`/admin/products/${String(productId)}/images`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
     },
@@ -107,21 +132,22 @@ export const api = {
     getById: (id) => apiClient.get(`/categories/${id}`),
     getBySlug: (slug) => apiClient.get(`/categories/slug/${slug}`),
     getFeatured: () => apiClient.get('/categories/featured'),
+    getProducts: (slug) => apiClient.get(`/categories/${slug}/products`),
     
     // Admin category operations
-    create: (categoryData) => apiClient.post('/admin/categories', categoryData),
-    update: (id, categoryData) => apiClient.put(`/admin/categories/${id}`, categoryData),
-    delete: (id) => apiClient.delete(`/admin/categories/${id}`),
+    create: (categoryData) => apiClient.post('/categories', categoryData),
+    update: (id, categoryData) => apiClient.put(`/categories/${id}`, categoryData),
+    delete: (id) => apiClient.delete(`/categories/${id}`),
   },
   
   // Cart endpoints
   cart: {
     get: () => apiClient.get('/cart'),
     addItem: (productId, quantity, options) => 
-      apiClient.post('/cart/items', { productId, quantity, options }),
+      apiClient.post('/cart', { product_id: String(productId), quantity, options }),
     updateItem: (itemId, quantity) => 
-      apiClient.put(`/cart/items/${itemId}`, { quantity }),
-    removeItem: (itemId) => apiClient.delete(`/cart/items/${itemId}`),
+      apiClient.put(`/cart/${itemId}`, { quantity }),
+    removeItem: (itemId) => apiClient.delete(`/cart/${itemId}`),
     clear: () => apiClient.delete('/cart'),
   },
   
@@ -169,9 +195,9 @@ export const api = {
   // Favorites/Wishlist endpoints
   favorites: {
     getAll: () => apiClient.get('/favorites'),
-    add: (productId) => apiClient.post('/favorites', { productId }),
-    remove: (productId) => apiClient.delete(`/favorites/${productId}`),
-    check: (productId) => apiClient.get(`/favorites/check/${productId}`),
+    add: (productId) => apiClient.post('/favorites', { product_id: String(productId) }),
+    remove: (productId) => apiClient.delete(`/favorites/${String(productId)}`),
+    check: (productId) => apiClient.get(`/favorites/check/${String(productId)}`),
   },
 };
 

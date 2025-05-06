@@ -68,16 +68,19 @@ class FavoriteService {
     if (!productId) return false;
     
     try {
+      // Ensure productId is a string
+      const productIdStr = String(productId);
+      
       // If authenticated, check via API
       if (this.isAuthenticated()) {
-        const response = await api.favorites.check(productId);
+        const response = await api.favorites.check(productIdStr);
         return response.isFavorite || false;
       }
       
       // Otherwise, check in local storage
       const favorites = await this.getFavorites();
       return favorites.some(item => (
-        typeof item === 'object' ? item.productId === productId : item === productId
+        typeof item === 'object' ? item.productId === productIdStr : item === productIdStr
       ));
     } catch (error) {
       console.error(`Error checking if product ${productId} is in favorites:`, error);
@@ -99,9 +102,12 @@ class FavoriteService {
     if (!productId) throw new Error('Product ID is required');
     
     try {
+      // Ensure productId is a string
+      const productIdStr = String(productId);
+      
       // If authenticated, use API
       if (this.isAuthenticated()) {
-        const response = await api.favorites.add(productId);
+        const response = await api.favorites.add(productIdStr);
         toast.success('Added to favorites');
         return response.items || [];
       }
@@ -146,9 +152,12 @@ class FavoriteService {
     if (!productId) throw new Error('Product ID is required');
     
     try {
+      // Ensure productId is a string
+      const productIdStr = String(productId);
+      
       // If authenticated, use API
       if (this.isAuthenticated()) {
-        const response = await api.favorites.remove(productId);
+        const response = await api.favorites.remove(productIdStr);
         toast.success('Removed from favorites');
         return response.items || [];
       }

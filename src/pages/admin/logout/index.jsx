@@ -1,42 +1,31 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import adminService from "../../../utils/adminService";
-import { toast } from "../../../utils/api";
+import { authService } from "../../../utils/authService";
 
-function AdminLogout() {
+const AdminLogout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleLogout = async () => {
-      try {
-        await adminService.logout();
-        toast.success("Logged out successfully");
-        
-        // Redirect to login page after logout
-        setTimeout(() => {
-          navigate("/admin/login");
-        }, 1000);
-      } catch (error) {
-        console.error("Logout error:", error);
-        toast.error("Failed to logout");
-        
-        // Redirect back to dashboard on error
-        setTimeout(() => {
-          navigate("/admin");
-        }, 1000);
-      }
+    const performLogout = () => {
+      // Logout the user
+      authService.logout();
+      
+      // Redirect to admin login page
+      navigate("/admin/login");
     };
 
-    // Execute logout when component mounts
-    handleLogout();
+    performLogout();
   }, [navigate]);
 
+  // Return a loading state while logout and redirect is happening
   return (
-    <div className="flex h-[calc(100vh-16rem)] flex-col items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-      <p className="mt-4 text-muted-foreground">Logging out...</p>
+    <div className="flex h-screen w-screen items-center justify-center">
+      <div className="text-center">
+        <div className="h-12 w-12 mx-auto mb-4 animate-spin rounded-full border-4 border-[#e91e63] border-t-transparent"></div>
+        <p className="text-lg font-medium">Logging out...</p>
+      </div>
     </div>
   );
-}
+};
 
 export default AdminLogout;

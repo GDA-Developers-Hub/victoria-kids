@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { authService } from '../../utils/authService';
+import { toast } from '../../utils/api';
 
 /**
  * Register page component for new user registration
@@ -50,15 +51,24 @@ const RegisterPage = () => {
     }
     
     try {
-      // Mock registration since we don't have a real backend
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Prepare user data for registration
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: 'customer' // Ensure role is set to customer
+      };
       
-      // Auto-login after successful registration
-      await authService.login(formData.email, formData.password);
+      // Call the registration endpoint via authService
+      const user = await authService.register(userData);
       
-      // Redirect to homepage
-      navigate('/');
+      if (user) {
+        toast.success('Registration successful! Welcome to Victoria Kids Shop.');
+        // Redirect to homepage after successful registration
+        navigate('/');
+      }
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Failed to register. Please try again.');
     } finally {
       setIsLoading(false);

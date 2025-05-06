@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 // Layout components
 import AdminLayout from "./components/admin/AdminLayout";
 import Layout from "./components/Layout";
+import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 // Admin pages
 import AdminDashboardPage from "./pages/admin/index";
@@ -18,6 +19,8 @@ import AdminEditProductPage from "./pages/admin/products/edit/index";
 import AdminAnalyticsPage from "./pages/admin/analytics/index";
 import AdminNewsletterPage from "./pages/admin/newsletter/index";
 import AdminSettingsPage from "./pages/admin/settings/index";
+import AdminNewCategoryPage from "./pages/admin/categories/new/index";
+import AdminEditCategoryPage from "./pages/admin/categories/edit/index";
 
 // Main pages
 import HomePage from "./pages/main/HomePage";
@@ -34,18 +37,6 @@ import CheckoutPage from "./pages/main/CheckoutPage";
 import CheckoutSuccessPage from "./pages/main/checkout/success/index";
 import FavoritesPage from "./pages/main/FavoritesPage";
 import OnboardingPage from "./pages/main/OnboardingPage";
-
-// Auth guard for admin routes
-const AdminGuard = () => {
-  // For development, we're not authenticating yet
-  // In production, check if user is authenticated
-  // const isAuthenticated = adminService.isAuthenticated();
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/admin/login" replace />;
-  // }
-  
-  return <Outlet />;
-};
 
 const router = createBrowserRouter([
   // Main routes with layout
@@ -123,7 +114,7 @@ const router = createBrowserRouter([
   // Admin routes with layout and auth guard
   {
     path: "/admin",
-    element: <AdminGuard />,
+    element: <ProtectedRoute />,
     children: [
       {
         element: <AdminLayout />,
@@ -147,6 +138,14 @@ const router = createBrowserRouter([
           {
             path: "categories",
             element: <AdminCategoriesPage />,
+          },
+          {
+            path: "categories/new",
+            element: <AdminNewCategoryPage />,
+          },
+          {
+            path: "categories/edit/:id",
+            element: <AdminEditCategoryPage />,
           },
           {
             path: "orders",

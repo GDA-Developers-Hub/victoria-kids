@@ -7,8 +7,10 @@ class AuthService {
   constructor() {
     // Check if localStorage is available
     this.storageAvailable = typeof window !== 'undefined' && window.localStorage;
-    this.TOKEN_KEY = 'victoria_kids_auth_token';
-    this.USER_KEY = 'victoria_kids_user';
+    // Use 'token' as key to match what's used in API interceptor
+    this.TOKEN_KEY = 'token';
+    this.USER_KEY = 'user';
+    this.REFRESH_TOKEN_KEY = 'refreshToken';
   }
 
   /**
@@ -25,14 +27,22 @@ class AuthService {
         ? await api.auth.adminLogin({ email, password })
         : await api.auth.login({ email, password });
       
-      const { user, token } = response;
+      console.log('Login response:', response); // Debug log
       
-      if (this.storageAvailable && user && token) {
-        localStorage.setItem(this.TOKEN_KEY, token);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      // Ensure we have user and token data
+      if (this.storageAvailable && response.user && response.token) {
+        // Store access token
+        localStorage.setItem(this.TOKEN_KEY, response.token);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
         
-        toast.success(`Welcome back, ${user.name}!`);
-        return user;
+        // Store refresh token if available
+        if (response.refreshToken) {
+          localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+          console.log('Refresh token stored');
+        }
+        
+        toast.success(`Welcome back, ${response.user.name}!`);
+        return response.user;
       }
       
       throw new Error('Invalid response from server');
@@ -76,14 +86,22 @@ class AuthService {
     try {
       const response = await api.auth.register(userData);
       
-      const { user, token } = response;
+      console.log('Registration response:', response); // Debug log
       
-      if (this.storageAvailable && user && token) {
-        localStorage.setItem(this.TOKEN_KEY, token);
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+      // Ensure we have user and token data
+      if (this.storageAvailable && response.user && response.token) {
+        // Store access token
+        localStorage.setItem(this.TOKEN_KEY, response.token);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
+        
+        // Store refresh token if available
+        if (response.refreshToken) {
+          localStorage.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+          console.log('Refresh token stored');
+        }
         
         toast.success('Registration successful! Welcome to Victoria Kids Shop.');
-        return user;
+        return response.user;
       }
       
       throw new Error('Invalid response from server');
@@ -195,6 +213,7 @@ class AuthService {
     if (this.storageAvailable) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     }
     toast.info('You have been logged out');
   }
@@ -239,6 +258,15 @@ class AuthService {
   getToken() {
     if (!this.storageAvailable) return null;
     return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  /**
+   * Get refresh token
+   * @returns {string|null} - Refresh token or null
+   */
+  getRefreshToken() {
+    if (!this.storageAvailable) return null;
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
   }
 }
 

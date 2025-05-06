@@ -23,22 +23,30 @@ const CartPage = () => {
     const loadCart = async () => {
       setIsLoading(true);
       try {
-        // Get cart items
-        const items = cartService.getCart();
+        // Get cart items from service
+        const itemsData = await cartService.getCart();
+        
+        // Ensure items is an array
+        const items = Array.isArray(itemsData) ? itemsData : 
+                     (itemsData && itemsData.items ? itemsData.items : []);
+        
         setCartItems(items);
         
-        // Get product details for each cart item
-        const productsData = await Promise.all(
-          items.map(async (item) => {
-            const product = await productService.getProductById(item.productId);
-            return {
-              ...product,
-              quantity: item.quantity
-            };
-          })
-        );
+        // The API is already returning product details, no need to fetch them separately
+        const productsData = items.map(item => {
+          return {
+            id: item.product_id,
+            name: item.name || 'Unnamed Product',
+            price: parseFloat(item.price || 0),
+            quantity: item.quantity || 1,
+            image: item.image || '/placeholder.svg',
+            // Add other fields if available
+            category: item.category_name || '',
+            stock: parseInt(item.stock || 10, 10)
+          };
+        });
         
-        setCartProducts(productsData.filter(Boolean)); // Filter out any null products
+        setCartProducts(productsData);
       } catch (error) {
         console.error('Error loading cart:', error);
       } finally {
@@ -52,10 +60,16 @@ const CartPage = () => {
   // Update cart item quantity
   const updateQuantity = async (productId, quantity) => {
     try {
-      await cartService.updateCartItem(productId, quantity);
+      // Ensure product ID is a string
+      const idStr = String(productId);
+      
+      await cartService.updateCartItem(idStr, quantity);
       
       // Update local state
-      setCartItems(cartService.getCart());
+      const updatedCart = await cartService.getCart();
+      setCartItems(updatedCart);
+      
+      // Update product quantity in the display
       setCartProducts(prev => 
         prev.map(product => 
           product.id === productId 
@@ -71,10 +85,16 @@ const CartPage = () => {
   // Remove item from cart
   const removeItem = async (productId) => {
     try {
-      await cartService.removeFromCart(productId);
+      // Ensure product ID is a string
+      const idStr = String(productId);
+      
+      await cartService.removeFromCart(idStr);
       
       // Update local state
-      setCartItems(cartService.getCart());
+      const updatedCart = await cartService.getCart();
+      setCartItems(updatedCart);
+      
+      // Remove product from display
       setCartProducts(prev => prev.filter(product => product.id !== productId));
     } catch (error) {
       console.error('Error removing item:', error);
@@ -154,19 +174,24 @@ const CartPage = () => {
                         <div className="flex items-center">
                           <div className="h-16 w-16 mr-4 flex-shrink-0">
                             <img 
-                              src={product.images?.[0] || product.image || '/placeholder.svg'} 
-                              alt={product.name}
+                              src={(product.images && Array.isArray(product.images) && product.images[0]) || 
+                                product.image || '/placeholder.svg'} 
+                              alt={product.name || 'Product'}
                               className="h-16 w-16 object-cover rounded-md"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/placeholder.svg';
+                              }}
                             />
                           </div>
                           <div>
-                            <h3 className="text-sm font-medium text-gray-900">{product.name}</h3>
-                            <p className="text-sm text-gray-500">{product.category}</p>
+                            <h3 className="text-sm font-medium text-gray-900">{product.name || 'Unnamed Product'}</h3>
+                            <p className="text-sm text-gray-500">{product.category || product.category_name || ''}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">KSh {product.price.toFixed(2)}</div>
+                        <div className="text-sm text-gray-900">KSh {parseFloat(product.price || 0).toFixed(2)}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center border rounded-md w-24">
@@ -177,11 +202,11 @@ const CartPage = () => {
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                           </button>
-                          <span className="flex-1 text-center">{product.quantity}</span>
+                          <span className="flex-1 text-center">{product.quantity || 1}</span>
                           <button
                             className="px-2 py-1 text-gray-500 hover:text-gray-700"
-                            onClick={() => updateQuantity(product.id, Math.min(product.stock, product.quantity + 1))}
-                            disabled={product.quantity >= product.stock}
+                            onClick={() => updateQuantity(product.id, Math.min(product.stock || 10, product.quantity + 1))}
+                            disabled={product.quantity >= (product.stock || 10)}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                           </button>
@@ -189,7 +214,7 @@ const CartPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          KSh {(product.price * product.quantity).toFixed(2)}
+                          KSh {(parseFloat(product.price || 0) * (product.quantity || 1)).toFixed(2)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

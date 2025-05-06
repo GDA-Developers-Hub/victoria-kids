@@ -69,13 +69,26 @@ class ProductService {
       // Prepare query parameters
       const params = { page, limit, order };
       
-      if (category) params.category = category;
       if (search) params.search = search;
       if (sort) params.sort = sort;
       
-      // Call the API
-      const response = await api.products.getAll(params);
-      return response;
+      let response;
+      
+      // If category is provided, use the getByCategory endpoint
+      if (category) {
+        response = await api.products.getByCategory(category, params);
+      } else {
+        // Otherwise use the general products endpoint
+        response = await api.products.getAll(params);
+      }
+      
+      // Handle the response format from products endpoint
+      return {
+        data: response.products || [],
+        total: response.total || 0,
+        page: response.page || 1,
+        limit
+      };
     } catch (error) {
       console.error('Error fetching products:', error);
       
@@ -140,15 +153,17 @@ class ProductService {
     if (!id) return null;
     
     try {
-      const product = await api.products.getById(id);
-      return product;
+      // Ensure id is a string and use the products endpoint
+      const productId = String(id);
+      const response = await api.products.getById(productId);
+      return response;
     } catch (error) {
       console.error(`Error fetching product with ID ${id}:`, error);
       
       // Only use mock data if the flag is enabled
       if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
-        const product = MOCK_PRODUCTS.find(p => p.id === id);
+        const product = MOCK_PRODUCTS.find(p => p.id == id);
         return product ? { product } : null;
       }
       
@@ -191,22 +206,40 @@ class ProductService {
    * @returns {Promise<Product[]>} - Related products
    */
   async getRelatedProducts(productId, limit = 4) {
-    if (!productId) return [];
+    if (!productId) return { products: [] };
     
     try {
-      const response = await api.products.getRelated(productId);
-      return { products: response.slice(0, limit) };
+      // First get the product to find its category
+      const productResponse = await this.getProductById(productId);
+      const product = productResponse.product || productResponse;
+      
+      if (!product) return { products: [] };
+      
+      // Then get products with the same category
+      const categoryName = product.category_name || product.category;
+      
+      if (!categoryName) return { products: [] };
+      
+      const params = { limit, category: categoryName };
+      const response = await api.products.getAll(params);
+      
+      // Filter out the current product
+      const relatedProducts = (response.products || [])
+        .filter(p => p.id != productId)
+        .slice(0, limit);
+      
+      return { products: relatedProducts };
     } catch (error) {
       console.error(`Error fetching related products for product ID ${productId}:`, error);
       
       // Only use mock data if the flag is enabled
       if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
-        const currentProduct = MOCK_PRODUCTS.find(p => p.id === productId);
+        const currentProduct = MOCK_PRODUCTS.find(p => p.id == productId);
         if (!currentProduct) return { products: [] };
         
         const relatedProducts = MOCK_PRODUCTS
-          .filter(p => p.id !== productId && p.category === currentProduct.category)
+          .filter(p => p.id != productId && p.category === currentProduct.category)
           .slice(0, limit);
         
         return { products: relatedProducts };
@@ -243,6 +276,28 @@ class ProductService {
       }
       
       return [];
+    }
+  }
+
+  /**
+   * Create a new product
+   * @param {Object} productData - Product data including images from Firebase
+   * @returns {Promise<Object>} - Created product
+   */
+  async createProduct(productData) {
+    try {
+      // Ensure we have the required fields
+      if (!productData.name || !productData.price || !productData.category) {
+        throw new Error('Missing required product information');
+      }
+
+      // Send product data to the backend
+      const response = await api.products.create(productData);
+      return response;
+    } catch (error) {
+      console.error('Error creating product:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create product';
+      throw new Error(errorMessage);
     }
   }
 }

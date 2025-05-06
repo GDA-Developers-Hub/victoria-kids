@@ -51,7 +51,7 @@ const Header = () => {
             )}
           </button>
           <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Victoria Kids Logo" width={40} height={40} className="rounded-full" />
+            {/* <img src="/logo.png" alt="Victoria Kids Logo" width={40} height={40} className="rounded-full" /> */}
             <span className="hidden font-bold text-xl md:inline-block">
               <span className="text-[#e91e63]">Victoria</span> <span className="text-[#4caf50]">K</span>
               <span className="text-[#2196f3]">I</span>

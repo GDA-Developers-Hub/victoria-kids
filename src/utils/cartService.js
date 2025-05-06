@@ -79,9 +79,12 @@ class CartService {
     if (!productId) throw new Error('Product ID is required');
     
     try {
+      // Ensure productId is a string
+      const productIdStr = String(productId);
+      
       // If authenticated, use API
       if (this.isAuthenticated()) {
-        const response = await api.cart.addItem(productId, quantity, options);
+        const response = await api.cart.addItem(productIdStr, quantity, options);
         toast.success('Product added to cart');
         return response.items || [];
       }
@@ -91,10 +94,10 @@ class CartService {
       const existingItemIndex = cart.findIndex(item => {
         // Match both product ID and options (if specified)
         if (Object.keys(options).length === 0) {
-          return item.productId === productId;
+          return item.productId === productIdStr;
         }
         
-        return item.productId === productId && 
+        return item.productId === productIdStr && 
           JSON.stringify(item.options || {}) === JSON.stringify(options);
       });
       
@@ -104,7 +107,7 @@ class CartService {
       } else {
         // Add new item
         cart.push({
-          productId,
+          productId: productIdStr,
           quantity,
           options,
           dateAdded: new Date().toISOString()

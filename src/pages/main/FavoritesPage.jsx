@@ -14,6 +14,8 @@ const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [suggestedProducts, setSuggestedProducts] = useState([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -27,19 +29,34 @@ const FavoritesPage = () => {
     const loadFavorites = async () => {
       setIsLoading(true);
       try {
-        // Get favorites
-        const favs = favoriteService.getFavorites();
-        setFavorites(favs);
+        // Get favorites from service
+        const favoritesData = await favoriteService.getFavorites();
         
-        // Get product details for each favorite
-        const productsData = await Promise.all(
-          favs.map(async (productId) => {
-            const product = await productService.getProductById(productId);
-            return product;
-          })
-        );
+        // Ensure favoritesList is an array
+        const favoritesList = Array.isArray(favoritesData) ? favoritesData : 
+                             (favoritesData && favoritesData.items ? favoritesData.items : []);
         
-        setFavoriteProducts(productsData.filter(Boolean)); // Filter out any null products
+        setFavorites(favoritesList);
+        
+        // The API is already returning product details, no need to fetch them separately
+        const productsData = favoritesList.map(favorite => {
+          return {
+            id: favorite.product_id,
+            name: favorite.name || 'Unnamed Product',
+            description: favorite.description || '',
+            price: parseFloat(favorite.price || 0),
+            originalPrice: favorite.original_price,
+            image: favorite.image || '/placeholder.svg',
+            category_name: favorite.category_name || '',
+            stock: parseInt(favorite.stock || 10, 10),
+            rating: parseFloat(favorite.rating || 0),
+            reviews: parseInt(favorite.reviews || 0, 10),
+            featured: favorite.featured || 0,
+            is_new: favorite.is_new || 0
+          };
+        });
+        
+        setFavoriteProducts(productsData);
       } catch (error) {
         console.error('Error loading favorites:', error);
       } finally {
@@ -50,14 +67,49 @@ const FavoritesPage = () => {
     loadFavorites();
   }, []);
 
+  // Load suggested products when favorites are loaded
+  useEffect(() => {
+    const loadSuggestions = async () => {
+      if (favoriteProducts.length === 0) return;
+      
+      setLoadingSuggestions(true);
+      try {
+        // Get a random favorite to find related products
+        const randomFavorite = favoriteProducts[Math.floor(Math.random() * favoriteProducts.length)];
+        
+        // Get related products - use product_id from the favorite item
+        const productId = randomFavorite.id || randomFavorite.product_id;
+        const { products } = await productService.getRelatedProducts(productId, 4);
+        setSuggestedProducts(products || []);
+      } catch (error) {
+        console.error('Error loading suggested products:', error);
+      } finally {
+        setLoadingSuggestions(false);
+      }
+    };
+
+    if (favoriteProducts.length > 0) {
+      loadSuggestions();
+    }
+  }, [favoriteProducts]);
+
   // Remove item from favorites
   const removeFavorite = async (productId) => {
     try {
-      await favoriteService.removeFromFavorites(productId);
+      // Ensure product ID is a string
+      const idStr = String(productId);
       
-      // Update local state
-      setFavorites(prev => prev.filter(id => id !== productId));
-      setFavoriteProducts(prev => prev.filter(product => product.id !== productId));
+      await favoriteService.removeFromFavorites(idStr);
+      
+      // Update local state directly instead of refetching
+      setFavorites(prev => prev.filter(item => 
+        String(item.product_id) !== idStr
+      ));
+      
+      // Also update displayed products
+      setFavoriteProducts(prev => prev.filter(product => 
+        String(product.id) !== idStr && String(product.product_id) !== idStr
+      ));
     } catch (error) {
       console.error('Error removing favorite:', error);
     }
@@ -75,7 +127,7 @@ const FavoritesPage = () => {
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {favoriteProducts.map((product) => (
-              <div key={product.id} className="relative">
+              <div key={product.id || Math.random()} className="relative">
                 <button
                   className="absolute right-2 top-2 z-10 rounded-full bg-white p-2 shadow-md"
                   onClick={() => removeFavorite(product.id)}
@@ -86,7 +138,21 @@ const FavoritesPage = () => {
                   </svg>
                   <span className="sr-only">Remove from favorites</span>
                 </button>
-                <ProductCard product={product} />
+                <ProductCard 
+                  product={{
+                    id: product.id,
+                    name: product.name || 'Unnamed Product',
+                    description: product.description || '',
+                    price: parseFloat(product.price || 0),
+                    originalPrice: product.originalPrice || product.original_price,
+                    images: Array.isArray(product.images) ? product.images : 
+                           (product.image ? [product.image] : []),
+                    category: product.category || product.category_name || '',
+                    stock: parseInt(product.stock || 10, 10),
+                    rating: parseFloat(product.rating || 0),
+                    reviews: parseInt(product.reviews || 0, 10)
+                  }} 
+                />
               </div>
             ))}
           </div>
@@ -122,9 +188,37 @@ const FavoritesPage = () => {
         <div className="mt-12">
           <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="bg-gray-100 animate-pulse h-80 rounded-lg"></div>
-            ))}
+            {loadingSuggestions ? (
+              // Loading skeletons
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-gray-100 animate-pulse h-80 rounded-lg"></div>
+              ))
+            ) : suggestedProducts.length > 0 ? (
+              // Suggested products
+              suggestedProducts.map((product) => (
+                <ProductCard
+                  key={product.id || Math.random()}
+                  product={{
+                    id: product.id,
+                    name: product.name || 'Unnamed Product',
+                    description: product.description || '',
+                    price: parseFloat(product.price || 0),
+                    originalPrice: product.originalPrice || product.original_price,
+                    images: Array.isArray(product.images) ? product.images : 
+                          (product.image ? [product.image] : []),
+                    category: product.category || product.category_name || '',
+                    stock: parseInt(product.stock || 10, 10),
+                    rating: parseFloat(product.rating || 0),
+                    reviews: parseInt(product.reviews || 0, 10)
+                  }}
+                />
+              ))
+            ) : (
+              // No suggestions available
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="bg-gray-100 animate-pulse h-80 rounded-lg"></div>
+              ))
+            )}
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { productService } from '../../utils/productService';
+import { categoryService } from '../../utils/categoryService';
 import ProductCard from '../../components/ProductCard';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -23,6 +24,7 @@ const ProductsPage = () => {
   
   // State variables
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [page, setPage] = useState(initialPage);
   const [category, setCategory] = useState(initialCategory);
@@ -31,18 +33,30 @@ const ProductsPage = () => {
   const [order, setOrder] = useState(initialOrder);
   const [filter, setFilter] = useState(initialFilter);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
-  // Available categories
-  const categories = [
-    { id: '', name: 'All Categories' },
-    { id: 'clothing', name: 'Clothing' },
-    { id: 'toys', name: 'Toys' },
-    { id: 'feeding', name: 'Feeding' },
-    { id: 'furniture', name: 'Furniture' },
-    { id: 'travel', name: 'Travel' },
-    { id: 'electronics', name: 'Electronics' },
-    { id: 'carriers', name: 'Carriers' },
-  ];
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsLoadingCategories(true);
+      try {
+        const response = await categoryService.getCategories();
+        // Add "All Categories" option at the beginning
+        const categoriesWithAll = [
+          { id: '', slug: '', name: 'All Categories' },
+          ...(response.categories || [])
+        ];
+        setCategories(categoriesWithAll);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setCategories([{ id: '', slug: '', name: 'All Categories' }]);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Sort options
   const sortOptions = [
@@ -169,9 +183,10 @@ const ProductsPage = () => {
               value={category}
               onChange={handleCategoryChange}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              disabled={isLoadingCategories}
             >
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
+                <option key={cat.id || 'all'} value={cat.slug}>
                   {cat.name}
                 </option>
               ))}
@@ -253,7 +268,7 @@ const ProductsPage = () => {
             
             {category && (
               <div className="bg-[#2196f3] text-white px-3 py-1 rounded-full text-sm flex items-center">
-                {categories.find(c => c.id === category)?.name}
+                {categories.find(c => c.slug === category)?.name}
                 <button
                   onClick={() => setCategory('')}
                   className="ml-2 focus:outline-none"
