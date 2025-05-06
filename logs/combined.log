@@ -3369,3 +3369,193 @@
 {"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:16:50"}
 {"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:16:50"}
 {"level":"error","message":"Not Found - /api/admin/categories - /api/admin/categories - POST - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 15:19:37"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:33:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:33:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:34:30"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:34:30"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:35:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:35:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:09"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:10"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:19"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:19"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:29"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:29"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:34"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:36:34"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:40:15"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:40:15"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:42:25"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:42:26"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:43:02"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:43:03"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=100&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:43:31"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=100&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:43:31"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:15"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:15"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:18"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:18"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:24"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:44:24"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:47"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:48"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:52"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 15:54:52"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:59:04"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 15:59:04"}
+{"level":"info","message":"Environment variables loaded:","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:20"}
+{"level":"info","message":"NODE_ENV: development","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:20"}
+{"level":"info","message":"PORT: 5000","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:20"}
+{"level":"info","message":"JWT_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:20"}
+{"level":"info","message":"JWT_REFRESH_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:20"}
+{"level":"info","message":"Starting database initialization...","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:22"}
+{"level":"info","message":"Found initDb.js at: C:\\Users\\USER\\Desktop\\REACT\\victoria-kids-shop (2)\\backend\\config\\initDb.js","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:22"}
+{"level":"info","message":"Database initialization completed","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:22"}
+{"level":"info","message":"Server running on port 5000","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:22"}
+{"level":"info","message":"API available at http://localhost:5000/api","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:22"}
+{"level":"info","message":"Database connection established successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:23"}
+{"level":"info","message":"Database victoria_kids_shop created or already exists","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:23"}
+{"level":"info","message":"Database tables created successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:23"}
+{"level":"info","message":"Admin user already exists","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:23"}
+{"level":"info","message":"Admin password updated for admin@victoriakids.com","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:24"}
+{"level":"info","message":"Database initialization completed successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:00:24"}
+{"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","level":"error","message":"Email service error: getaddrinfo ENOTFOUND smtp.example.com","service":"victoria-kids-api","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","syscall":"getaddrinfo","timestamp":"2025-05-06 16:00:24"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:13"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:14"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:35"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:35"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:38"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:38"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:41"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:41"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:43"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:43"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:47"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:01:47"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:03:39"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:03:39"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:13"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:13"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:20"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:20"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:25"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:25"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:29"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:04:29"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:13:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:13:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:18"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:19"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:37"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:38"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:44"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=100&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=100&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:45"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:48"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:48"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:49"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:49"}
+{"level":"error","message":"Not Found - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - /api/products/category/clothing?page=1&limit=12&order=asc&sort=name - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:50"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:51"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:24:51"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:39"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:39"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/customers?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:54"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/orders?page=1&limit=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:55"}
+{"level":"error","message":"Not Found - /api/admin/categories/1 - /api/admin/categories/1 - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:59"}
+{"level":"error","message":"Not Found - /api/admin/categories/1 - /api/admin/categories/1 - GET - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:25:59"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:26:08"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?params[page]=1&params[limit]=10","service":"victoria-kids-api","timestamp":"2025-05-06 16:26:08"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:26:13"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:26:13"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:29:41"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:29:41"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:29:48"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:29:48"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:38:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:38:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:38:49"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:38:49"}
+{"level":"error","message":"Not Found - /api/cart/items - /api/cart/items - POST - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:38:59"}
+{"level":"error","message":"Not Found - /api/cart/items - /api/cart/items - POST - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:39:03"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:42:57"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:42:57"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:43:00"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:43:00"}
+{"level":"info","message":"Environment variables loaded:","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:43"}
+{"level":"info","message":"NODE_ENV: development","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:43"}
+{"level":"info","message":"PORT: 5000","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:43"}
+{"level":"info","message":"JWT_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:43"}
+{"level":"info","message":"JWT_REFRESH_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:43"}
+{"level":"info","message":"Starting database initialization...","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Found initDb.js at: C:\\Users\\USER\\Desktop\\REACT\\victoria-kids-shop (2)\\backend\\config\\initDb.js","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Database initialization completed","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"warn","message":"Port 5000 is already in use, trying alternative port 50001","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Starting database initialization...","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Found initDb.js at: C:\\Users\\USER\\Desktop\\REACT\\victoria-kids-shop (2)\\backend\\config\\initDb.js","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Database initialization completed","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Server running on port 50001","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"API available at http://localhost:50001/api","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:45"}
+{"level":"info","message":"Database connection established successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"level":"info","message":"Database victoria_kids_shop created or already exists","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"level":"info","message":"Database tables created successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"level":"info","message":"Admin user already exists","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"level":"info","message":"Admin password updated for admin@victoriakids.com","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"level":"info","message":"Database initialization completed successfully","service":"victoria-kids-api","timestamp":"2025-05-06 16:50:46"}
+{"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","level":"error","message":"Email service error: getaddrinfo ENOTFOUND smtp.example.com","service":"victoria-kids-api","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","syscall":"getaddrinfo","timestamp":"2025-05-06 16:50:47"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:53:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:53:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:14"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:14"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:40"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:40"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:48"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:48"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:51"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:52"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:53"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:53"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:54"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:55"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:57"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 16:54:57"}
+{"level":"error","message":"Not authorized, no token - /api/cart - POST - ::1","service":"victoria-kids-api","timestamp":"2025-05-06 16:56:57"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:14"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:14"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:19"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:19"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:25"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:25"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:36"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:05:36"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:06:05"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:06:08"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:07:36"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:07:36"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:08:01"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:08:01"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:08:31"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:08:31"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:02"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:02"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:36"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:40"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:44"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:45"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:52"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 17:09:52"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 17:10:02"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 17:10:02"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 20:03:42"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 20:03:43"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 20:05:10"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-06 20:05:10"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 20:05:28"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=12&order=asc&sort=name","service":"victoria-kids-api","timestamp":"2025-05-06 20:05:28"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 20:06:26"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/products?page=1&limit=30&order=asc","service":"victoria-kids-api","timestamp":"2025-05-06 20:06:26"}
