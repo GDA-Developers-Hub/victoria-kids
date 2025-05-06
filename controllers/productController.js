@@ -206,8 +206,8 @@ const createProduct = async (req, res) => {
       images
     } = req.body;
     
-    // Use the image URLs provided from Firebase storage
-    // These should be passed in the request body after uploading via the /api/media endpoints
+    // Use the image URLs provided from frontend
+    // These URLs should be passed in the request body
     const productImages = images ? JSON.parse(images).map(url => ({
       image_url: url
     })) : [];
@@ -283,7 +283,7 @@ const updateProduct = async (req, res) => {
       warranty
     } = req.body;
     
-    // Process updated images from Firebase
+    // Process updated images
     let updatedImages = products[productIndex].images;
     if (req.body.images) {
       try {
@@ -292,7 +292,7 @@ const updateProduct = async (req, res) => {
         updatedImages = imageUrls.map(url => ({
           image_url: url
         }));
-        logger.info(`Product ${req.params.id} updated with ${updatedImages.length} Firebase images`);
+        logger.info(`Product ${req.params.id} updated with ${updatedImages.length} images`);
       } catch (error) {
         logger.error('Error parsing image URLs:', error);
       }
