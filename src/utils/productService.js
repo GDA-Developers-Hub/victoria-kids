@@ -48,6 +48,10 @@ const MOCK_PRODUCTS = [
   // More mock products...
 ];
 
+// Flag to control whether to use mock data
+// Set to false to always use real API
+const USE_MOCK_DATA = false;
+
 class ProductService {
   /**
    * Get all products with filtering, sorting, and pagination
@@ -75,8 +79,8 @@ class ProductService {
     } catch (error) {
       console.error('Error fetching products:', error);
       
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
+      // Only use mock data if the flag is enabled
+      if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
         let filtered = [...MOCK_PRODUCTS];
         
@@ -122,7 +126,7 @@ class ProductService {
         };
       }
       
-      // Return empty result in production
+      // Return empty result if not using mock data
       return { data: [], total: 0, page, limit };
     }
   }
@@ -141,11 +145,11 @@ class ProductService {
     } catch (error) {
       console.error(`Error fetching product with ID ${id}:`, error);
       
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
+      // Only use mock data if the flag is enabled
+      if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
         const product = MOCK_PRODUCTS.find(p => p.id === id);
-        return product || null;
+        return product ? { product } : null;
       }
       
       return null;
@@ -164,8 +168,8 @@ class ProductService {
     } catch (error) {
       console.error('Error fetching featured products:', error);
       
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
+      // Only use mock data if the flag is enabled
+      if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
         const newProducts = MOCK_PRODUCTS.filter(p => p.isNew).slice(0, Math.ceil(limit/2));
         const topRated = MOCK_PRODUCTS
@@ -190,23 +194,25 @@ class ProductService {
     if (!productId) return [];
     
     try {
-      const relatedProducts = await api.products.getRelated(productId);
-      return relatedProducts.slice(0, limit);
+      const response = await api.products.getRelated(productId);
+      return { products: response.slice(0, limit) };
     } catch (error) {
       console.error(`Error fetching related products for product ID ${productId}:`, error);
       
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
+      // Only use mock data if the flag is enabled
+      if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
         const currentProduct = MOCK_PRODUCTS.find(p => p.id === productId);
-        if (!currentProduct) return [];
+        if (!currentProduct) return { products: [] };
         
-        return MOCK_PRODUCTS
+        const relatedProducts = MOCK_PRODUCTS
           .filter(p => p.id !== productId && p.category === currentProduct.category)
           .slice(0, limit);
+        
+        return { products: relatedProducts };
       }
       
-      return [];
+      return { products: [] };
     }
   }
   
@@ -225,8 +231,8 @@ class ProductService {
     } catch (error) {
       console.error(`Error searching products with query ${query}:`, error);
       
-      // Fallback to mock data in development environment
-      if (process.env.NODE_ENV === 'development') {
+      // Only use mock data if the flag is enabled
+      if (USE_MOCK_DATA) {
         console.warn('Using mock data as fallback');
         const searchLower = query.toLowerCase();
         return MOCK_PRODUCTS

@@ -91,10 +91,12 @@ const ProductsPage = () => {
           order,
         });
         
-        setProducts(result.data);
-        setTotalProducts(result.total);
+        setProducts(result?.data || []);
+        setTotalProducts(result?.total || 0);
       } catch (error) {
         console.error('Error loading products:', error);
+        setProducts([]);
+        setTotalProducts(0);
       } finally {
         setIsLoading(false);
       }
@@ -145,7 +147,7 @@ const ProductsPage = () => {
   };
 
   // Calculate pagination
-  const totalPages = Math.ceil(totalProducts / 12);
+  const totalPages = Math.max(1, Math.ceil(totalProducts / 12));
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
@@ -289,7 +291,7 @@ const ProductsPage = () => {
             <div key={index} className="bg-gray-100 animate-pulse h-80 rounded-lg"></div>
           ))}
         </div>
-      ) : products.length > 0 ? (
+      ) : products && products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -318,7 +320,7 @@ const ProductsPage = () => {
       )}
       
       {/* Pagination */}
-      {totalPages > 1 && (
+      {totalPages > 1 && pageNumbers && pageNumbers.length > 0 && (
         <div className="flex justify-center mt-8">
           <nav className="flex items-center gap-1">
             <Button

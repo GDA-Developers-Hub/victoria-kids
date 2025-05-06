@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import adminService from "../../../utils/adminService";
+import { categoryService } from "../../../utils/categoryService";
 import { toast } from "../../../utils/api";
 import { getProductImageUrl } from "../../../utils/imageUtils";
 
@@ -23,12 +23,25 @@ function AdminCategoriesPage() {
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const data = await adminService.getCategories(currentPage, 10, searchQuery);
-      setCategories(data.categories);
-      setTotalPages(data.totalPages);
+      // Use the API endpoint for admin categories
+      const response = await fetch(`http://localhost:5000/api/admin/categories?page=${currentPage}&limit=10${searchQuery ? `&search=${searchQuery}` : ''}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      
+      const data = await response.json();
+      setCategories(data.categories || []);
+      setTotalPages(data.pages || 1);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      toast.error("Failed to load categories");
+      toast.error("Failed to load categories: " + (error.message || 'Unknown error'));
+      setCategories([]);
     } finally {
       setIsLoading(false);
     }
@@ -53,33 +66,51 @@ function AdminCategoriesPage() {
     if (!categoryToDelete) return;
 
     try {
-      await adminService.deleteCategory(categoryToDelete);
+      await categoryService.deleteCategory(categoryToDelete);
       fetchCategories();
       setDeleteDialogOpen(false);
       setCategoryToDelete(null);
       toast.success("Category deleted successfully");
     } catch (error) {
       console.error("Error deleting category:", error);
-      toast.error("Failed to delete category");
+      toast.error("Failed to delete category: " + (error.message || 'Unknown error'));
     }
   };
 
   const handleEditClick = async (categoryId) => {
     try {
-      const category = await adminService.getCategory(categoryId);
+      // Fetch the specific category by ID
+      const response = await fetch(`http://localhost:5000/api/categories/${categoryId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch category details');
+      }
+      
+      const data = await response.json();
+      const category = data.category;
+      
+      if (!category) {
+        throw new Error('Category not found');
+      }
+      
       setFormData({
         id: category.id,
         name: category.name,
         slug: category.slug,
         description: category.description,
-        image_url: category.image_url,
-        status: category.status
+        image_url: category.image || category.image_url,
+        status: category.status || 'active'
       });
       setIsEditing(true);
       setFormDialogOpen(true);
     } catch (error) {
       console.error("Error fetching category:", error);
-      toast.error("Failed to load category data");
+      toast.error("Failed to load category data: " + (error.message || 'Unknown error'));
     }
   };
 
@@ -121,11 +152,11 @@ function AdminCategoriesPage() {
     try {
       if (isEditing) {
         // Update existing category
-        await adminService.updateCategory(formData.id, formData);
+        await categoryService.updateCategory(formData.id, formData);
         toast.success("Category updated successfully");
       } else {
         // Create new category
-        await adminService.createCategory(formData);
+        await categoryService.createCategory(formData);
         toast.success("Category created successfully");
       }
       
@@ -134,7 +165,7 @@ function AdminCategoriesPage() {
       setFormDialogOpen(false);
     } catch (error) {
       console.error("Error saving category:", error);
-      toast.error(`Failed to ${isEditing ? "update" : "create"} category`);
+      toast.error(`Failed to ${isEditing ? "update" : "create"} category: ` + (error.message || 'Unknown error'));
     }
   };
 

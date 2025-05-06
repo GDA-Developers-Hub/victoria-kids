@@ -1,69 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { categoryService } from '../../utils/categoryService';
 
 /**
- * Categories page component displaying all product categories
+ * Categories page component displaying all product categories fetched from API
  */
 const CategoriesPage = () => {
-  // Categories data with images, descriptions and counts
-  const categories = [
-    {
-      id: 'clothing',
-      name: 'Clothing',
-      description: 'Comfortable and stylish clothing for babies and toddlers.',
-      image: '/categories/clothing.jpg',
-      count: 24
-    },
-    {
-      id: 'toys',
-      name: 'Toys',
-      description: 'Educational and fun toys for different age groups.',
-      image: '/categories/toys.jpg',
-      count: 18
-    },
-    {
-      id: 'feeding',
-      name: 'Feeding',
-      description: 'Bottles, utensils, and other feeding essentials.',
-      image: '/categories/feeding.jpg',
-      count: 15
-    },
-    {
-      id: 'furniture',
-      name: 'Furniture',
-      description: 'Cribs, beds, and other furniture for your baby\'s room.',
-      image: '/categories/furniture.jpg',
-      count: 12
-    },
-    {
-      id: 'travel',
-      name: 'Travel',
-      description: 'Strollers, car seats, and other travel accessories.',
-      image: '/categories/travel.jpg',
-      count: 14
-    },
-    {
-      id: 'electronics',
-      name: 'Electronics',
-      description: 'Baby monitors, sterilizers, and other electronic devices.',
-      image: '/categories/electronics.jpg',
-      count: 10
-    },
-    {
-      id: 'carriers',
-      name: 'Carriers',
-      description: 'Baby carriers and wraps for comfort and convenience.',
-      image: '/categories/carriers.jpg',
-      count: 8
-    },
-    {
-      id: 'bath',
-      name: 'Bath & Care',
-      description: 'Bathing essentials and skincare products for babies.',
-      image: '/categories/bath.jpg',
-      count: 20
-    }
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await categoryService.getCategories();
+        setCategories(response.categories || []);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        setError('Failed to load categories. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  // Placeholder for popular collections - replace with dynamic data if needed
+  const popularCollections = [
+    { name: 'New Arrivals', image: '/collections/new-arrivals.jpg', url: '/products?filter=new' },
+    { name: 'Budget Picks', image: '/collections/budget-picks.jpg', url: '/products?filter=budget' },
+    { name: 'Luxury Items', image: '/collections/luxury-items.jpg', url: '/products?filter=luxury' },
+    { name: 'On Sale', image: '/collections/on-sale.jpg', url: '/products?filter=sale' }
   ];
+
+  if (loading) {
+    return (
+      <div className="container py-8">
+        <h1 className="text-3xl font-bold mb-6">Shop by Category</h1>
+        <p className="text-center py-8">Loading categories...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container py-8">
+        <h1 className="text-3xl font-bold mb-6">Shop by Category</h1>
+        <p className="text-center text-red-500 py-8">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">
@@ -71,48 +59,55 @@ const CategoriesPage = () => {
 
       {/* Featured Categories */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {categories.slice(0, 3).map((category) => (
-          <Link
-            key={category.id}
-            to={`/products?category=${category.id}`}
-            className="group relative overflow-hidden rounded-lg h-64 flex items-end justify-start text-left bg-cover bg-center"
-            style={{ backgroundImage: `url(${category.image || '/placeholder.svg'})` }}
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity" />
-            <div className="relative w-full p-5 md:p-6">
-              <h3 className="text-xl font-bold text-white mb-1">{category.name}</h3>
-              <p className="text-sm text-white opacity-90 mb-3">{category.description}</p>
-              <span className="inline-block bg-white bg-opacity-20 py-1 px-3 text-white text-xs rounded-full">
-                {category.count} products
-              </span>
-            </div>
-          </Link>
-        ))}
+        {categories.length > 0 ? (
+          categories.slice(0, 3).map((category) => (
+            <Link
+              key={category.id}
+              to={`/products?category=${category.id}`}
+              className="group relative overflow-hidden rounded-lg h-64 flex items-end justify-start text-left bg-cover bg-center"
+              style={{ backgroundImage: `url(${category.image || '/placeholder.svg'})` }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity" />
+              <div className="relative w-full p-5 md:p-6">
+                <h3 className="text-xl font-bold text-white mb-1">{category.name}</h3>
+                {category.description && (
+                  <p className="text-sm text-white opacity-90 mb-3">{category.description}</p>
+                )}
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="text-center py-8">No featured categories found.</p>
+        )}
       </div>
 
       {/* All Categories */}
       <h2 className="text-2xl font-bold mb-6">All Categories</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            to={`/products?category=${category.id}`}
-            className="group block overflow-hidden rounded-lg border transition-colors hover:border-primary"
-          >
-            <div className="relative aspect-square overflow-hidden">
-              <img
-                src={category.image || '/placeholder.svg'}
-                alt={category.name}
-                className="object-cover w-full h-full transition-transform group-hover:scale-105"
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="font-medium group-hover:text-[#e91e63]">{category.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{category.count} products</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {categories.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {categories.map((category) => (
+            <Link
+              key={category.id}
+              to={`/products?category=${category.id}`}
+              className="group block overflow-hidden rounded-lg border transition-colors hover:border-primary"
+            >
+              <div className="relative aspect-square overflow-hidden">
+                <img
+                  src={category.image || '/placeholder.svg'}
+                  alt={category.name}
+                  className="object-cover w-full h-full transition-transform group-hover:scale-105"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-medium group-hover:text-[#e91e63]">{category.name}</h3>
+                {/* Product count removed as it might not be available from API */}
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center py-8">No categories found.</p>
+      )}
 
       {/* Popular Collections */}
       <h2 className="text-2xl font-bold mt-12 mb-6">Popular Collections</h2>

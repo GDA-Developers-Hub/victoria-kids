@@ -83,18 +83,37 @@ const ProductCard = ({ product, className }) => {
     }
   };
 
+  // Function to determine which badge to show (prioritize in this order)
+  const getBadge = () => {
+    if (product.isNew) {
+      return { label: "New", bgColor: "bg-[#2196f3]" };
+    } else if (product.originalPrice) {
+      const discount = calculateDiscount(product.originalPrice, product.price);
+      return { label: `${discount}% OFF`, bgColor: "bg-[#e91e63]" };
+    } else if (product.isBudget) {
+      return { label: "Budget", bgColor: "bg-[#4caf50]" };
+    } else if (product.isLuxury) {
+      return { label: "Luxury", bgColor: "bg-[#9c27b0]" };
+    }
+    return null;
+  };
+
+  const badge = getBadge();
+
   return (
-    <Card className={cn("h-full overflow-hidden transition-all hover:shadow-md", className)}>
-      <Link to={`/products/${product.id}`} className="relative block">
+    <Card className={cn("overflow-hidden bg-white border-0 shadow-sm rounded-lg", className)}>
+      <Link to={`/products/${product.id}`}>
         <div className="relative aspect-square overflow-hidden">
           <img
             src={getProductImageUrl(product)}
             alt={product.name}
-            className="object-cover w-full h-full transition-transform hover:scale-105"
+            className="object-cover w-full h-full"
             crossOrigin="anonymous"
           />
+          
+          {/* Heart/Favorite button */}
           <button
-            className="absolute right-2 top-2 rounded-full bg-white p-1.5 text-muted-foreground hover:text-[#e91e63]"
+            className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-sm"
             onClick={toggleFavorite}
             disabled={isTogglingFavorite}
           >
@@ -104,7 +123,7 @@ const ProductCard = ({ product, className }) => {
               height="20" 
               viewBox="0 0 24 24" 
               fill={isFavorite ? "#e91e63" : "none"} 
-              stroke={isFavorite ? "#e91e63" : "currentColor"} 
+              stroke={isFavorite ? "#e91e63" : "#666"} 
               strokeWidth="2" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
@@ -112,105 +131,81 @@ const ProductCard = ({ product, className }) => {
             >
               <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
             </svg>
-            <span className="sr-only">Add to favorites</span>
           </button>
 
-          {product.isNew && (
-            <Badge className="absolute left-2 top-2 bg-[#2196f3]">New</Badge>
-          )}
-
-          {product.originalPrice && (
-            <Badge className="absolute left-2 top-2 bg-[#e91e63]">
-              {calculateDiscount(product.originalPrice, product.price)}% OFF
-            </Badge>
-          )}
-
-          {product.isBudget && !product.isNew && !product.originalPrice && (
-            <Badge className="absolute left-2 top-2 bg-[#4caf50]">Budget Pick</Badge>
-          )}
-
-          {product.isLuxury && !product.isNew && !product.originalPrice && (
-            <Badge className="absolute left-2 top-2 bg-[#9c27b0]">Luxury</Badge>
+          {/* Badge (New, OFF, etc) - only show one based on priority */}
+          {badge && (
+            <div className={`absolute left-0 top-3 ${badge.bgColor} text-white text-xs py-1 px-2 rounded-r-full font-medium`}>
+              {badge.label}
+            </div>
           )}
         </div>
       </Link>
 
-      <CardContent className="p-4">
+      <CardContent className="p-3">
+        <div className="mb-1">
+          {/* Star Rating */}
+          <div className="flex items-center text-xs">
+            <div className="flex items-center text-yellow-400">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <svg 
+                  key={i}
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 24 24" 
+                  fill={i < Math.floor(product.rating) ? "currentColor" : "none"} 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  className="h-3 w-3"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              ))}
+            </div>
+            <span className="ml-1 text-gray-500">({product.reviews})</span>
+          </div>
+        </div>
+
+        <h3 className="font-medium text-sm line-clamp-2 mb-1">{product.name}</h3>
+        
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h3 className="font-medium">{product.name}</h3>
-            <p className="text-sm text-muted-foreground">{product.category}</p>
-          </div>
-        </div>
-
-        <div className="mt-2 flex items-center">
-          <div className="flex items-center">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <svg 
-                key={i}
-                xmlns="http://www.w3.org/2000/svg" 
-                width="16" 
-                height="16" 
-                viewBox="0 0 24 24" 
-                fill={i < Math.floor(product.rating) ? "#ffeb3b" : "none"} 
-                stroke={i < Math.floor(product.rating) ? "#ffeb3b" : "currentColor"} 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className={cn(
-                  "h-4 w-4",
-                  i < Math.floor(product.rating) ? "fill-[#ffeb3b] text-[#ffeb3b]" : "text-muted-foreground",
-                )}
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-              </svg>
-            ))}
-          </div>
-          <span className="ml-2 text-xs text-muted-foreground">({product.reviews})</span>
-        </div>
-
-        <div className="mt-3 flex items-center justify-between">
           <div>
             {product.originalPrice ? (
-              <div className="flex items-center gap-2">
-                <span className="font-bold">KSh {product.price.toFixed(2)}</span>
-                <span className="text-sm text-muted-foreground line-through">
+              <div className="flex flex-col">
+                <span className="font-bold text-sm">KSh {product.price.toFixed(2)}</span>
+                <span className="text-xs text-gray-500 line-through">
                   KSh {product.originalPrice.toFixed(2)}
                 </span>
               </div>
             ) : (
-              <span className="font-bold">KSh {product.price.toFixed(2)}</span>
+              <span className="font-bold text-sm">KSh {product.price.toFixed(2)}</span>
             )}
           </div>
-          <div className="text-sm text-muted-foreground">
-            {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
-          </div>
+          
+          {/* Add to Cart Button */}
+          <button 
+            className="bg-white rounded-full p-1.5 border border-gray-200 shadow-sm"
+            onClick={handleAddToCart}
+            disabled={isAddingToCart || product.stock <= 0}
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="h-4 w-4 text-gray-700"
+            >
+              <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+            </svg>
+          </button>
         </div>
       </CardContent>
-
-      <CardFooter className="p-4 pt-0">
-        <Button
-          className="w-full bg-[#e91e63] hover:bg-[#c2185b]"
-          onClick={handleAddToCart}
-          disabled={isAddingToCart || product.stock <= 0}
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="mr-2 h-4 w-4"
-          >
-            <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-          </svg>
-          {isAddingToCart ? "Adding..." : "Add to Cart"}
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

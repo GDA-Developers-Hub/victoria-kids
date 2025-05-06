@@ -29,11 +29,6 @@ const HomePage = () => {
         const allCategories = categoriesResponse.categories || [];
         setCategories(allCategories);
         
-        // Set active category to first category if available
-        if (allCategories.length > 0) {
-          setActiveCategory(allCategories[0].slug);
-        }
-        
         // Load featured products
         const featured = await productService.getFeaturedProducts(8);
         setFeaturedProducts(featured);
@@ -44,15 +39,11 @@ const HomePage = () => {
         
         await Promise.all(topCategories.map(async (category) => {
           try {
-            // Use the API endpoint to get products by category
-            const response = await fetch(`http://localhost:5000/api/categories/${category.slug}/products`);
-            
-            if (!response.ok) {
-              throw new Error(`Failed to fetch products for category ${category.name}`);
-            }
-            
-            const data = await response.json();
-            categoryProducts[category.slug] = data.products || [];
+            const response = await productService.getProducts({ 
+              category: category.slug,
+              limit: 5
+            });
+            categoryProducts[category.slug] = response.data || [];
           } catch (error) {
             console.error(`Error loading products for category ${category.name}:`, error);
             categoryProducts[category.slug] = [];
@@ -87,7 +78,6 @@ const HomePage = () => {
         
       } catch (error) {
         console.error('Error loading homepage data:', error);
-        toast.error('Failed to load homepage data: ' + (error.message || 'Unknown error'));
       } finally {
         setIsLoading(false);
       }
@@ -123,16 +113,6 @@ const HomePage = () => {
           {/* Categories Sidebar - Desktop Only */}
           <div className="hidden lg:block lg:w-1/5 bg-white rounded-lg shadow-sm p-4 h-fit">
             <h2 className="font-bold text-lg mb-4">Categories</h2>
-            {categories.length === 0 && !isLoading && (
-              <p className="text-gray-500 text-sm">No categories found</p>
-            )}
-            {isLoading && (
-              <div className="animate-pulse space-y-2">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-8 bg-gray-200 rounded"></div>
-                ))}
-              </div>
-            )}
             <ul className="space-y-2">
               {isLoading ? (
                 Array(8).fill(0).map((_, i) => (
@@ -255,176 +235,85 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Product Sections - Full Width */}
-        <div className="mt-8">
-          {/* All Products Section */}
-          <div className="mb-8">
-            <SectionTitle title="All Products" linkTo="/products" />
-            <div className="overflow-x-auto">
-              <div className="flex space-x-2 mb-4">
-                <Button 
-                  variant={activeCategory === 'all' ? "default" : "outline"} 
-                  size="sm" 
-                  className="whitespace-nowrap"
-                  onClick={() => setActiveCategory('all')}
-                >
-                  All
-                </Button>
-                {categories.slice(0, 7).map((category) => (
+            {/* All Products Section */}
+            <div className="mb-6">
+              <SectionTitle title="All Products" linkTo="/products" />
+              <div className="overflow-x-auto">
+                <div className="flex space-x-2 mb-4">
                   <Button 
-                    key={category.id} 
-                    variant={activeCategory === category.slug ? "default" : "outline"}
-                    size="sm"
+                    variant={activeCategory === 'all' ? "default" : "outline"} 
+                    size="sm" 
                     className="whitespace-nowrap"
-                    onClick={() => setActiveCategory(category.slug)}
+                    onClick={() => setActiveCategory('all')}
                   >
-                    {category.name}
+                    All
                   </Button>
-                ))}
+                  {categories.slice(0, 7).map((category) => (
+                    <Button 
+                      key={category.id} 
+                      variant={activeCategory === category.slug ? "default" : "outline"}
+                      size="sm"
+                      className="whitespace-nowrap"
+                      onClick={() => setActiveCategory(category.slug)}
+                    >
+                      {category.name}
+                    </Button>
+                  ))}
+                </div>
               </div>
+
+              {isLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {Array(10).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {featuredProducts.slice(0, 10).map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(10).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {activeCategory === 'all' ? (
-                  featuredProducts.length > 0 ? (
-                    featuredProducts.slice(0, 10).map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-gray-500">No products found</p>
-                    </div>
-                  )
-                ) : (
-                  productsByCategory[activeCategory] && productsByCategory[activeCategory].length > 0 ? (
-                    productsByCategory[activeCategory].slice(0, 10).map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-8">
-                      <p className="text-gray-500">No products found in this category</p>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Promotional Banners */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            {/* Educational Toys Banner */}
-            <div className="bg-green-100 rounded-lg overflow-hidden relative">
-              <div className="relative z-10 p-6">
-                <h3 className="text-2xl font-bold mb-2">Educational Toys</h3>
-                <p className="mb-4">Develop your baby's skills</p>
-                <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-green-600 border-white" asChild>
-                  <Link to="/categories/toys">Shop Now</Link>
-                </Button>
-              </div>
-              <img 
-                src="/categories/toys.jpg" 
-                alt="Educational Toys" 
-                className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
-              />
+            {/* Flash Deals Section */}
+            <div className="mb-6">
+              <SectionTitle title="Flash Deals" linkTo="/products?discount=true" />
+              
+              {isLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {Array(5).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {flashDeals.slice(0, 5).map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
             </div>
-            
-            {/* Organic Clothing Banner */}
-            <div className="bg-blue-100 rounded-lg overflow-hidden relative">
-              <div className="relative z-10 p-6">
-                <h3 className="text-2xl font-bold mb-2">Organic Clothing</h3>
-                <p className="mb-4">Gentle on baby's skin</p>
-                <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-blue-600 border-white" asChild>
-                  <Link to="/categories/clothing">Shop Now</Link>
-                </Button>
-              </div>
-              <img 
-                src="/categories/clothing.jpg" 
-                alt="Organic Clothing" 
-                className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
-              />
-            </div>
-          </div>
 
-          {/* Flash Deals Section */}
-          <div className="mb-8">
-            <SectionTitle title="Flash Deals" linkTo="/products?discount=true" />
-            
-            {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(5).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {flashDeals.slice(0, 5).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* New Arrivals Section */}
-          <div className="mb-8">
-            <SectionTitle title="New Arrivals" linkTo="/products?sort=newest" />
-            
-            {isLoading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {Array(5).fill(0).map((_, i) => (
-                  <ProductSkeleton key={i} />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                {newArrivals.slice(0, 5).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Promotional Banners */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            {/* Educational Toys Banner */}
-            <div className="bg-green-100 rounded-lg overflow-hidden relative">
-              <div className="relative z-10 p-6">
-                <h3 className="text-2xl font-bold mb-2">Educational Toys</h3>
-                <p className="mb-4">Develop your baby's skills</p>
-                <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-green-600 border-white" asChild>
-                  <Link to="/categories/toys">Shop Now</Link>
-                </Button>
-              </div>
-              <img 
-                src="/categories/toys.jpg" 
-                alt="Educational Toys" 
-                className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
-              />
-            </div>
-            
-            {/* Organic Clothing Banner */}
-            <div className="bg-blue-100 rounded-lg overflow-hidden relative">
-              <div className="relative z-10 p-6">
-                <h3 className="text-2xl font-bold mb-2">Organic Clothing</h3>
-                <p className="mb-4">Gentle on baby's skin</p>
-                <Button size="sm" variant="outline" className="bg-white hover:bg-white hover:text-blue-600 border-white" asChild>
-                  <Link to="/categories/clothing">Shop Now</Link>
-                </Button>
-              </div>
-              <img 
-                src="/categories/clothing.jpg" 
-                alt="Organic Clothing" 
-                className="absolute top-0 right-0 h-full w-full object-cover object-center opacity-30 z-0"
-              />
+            {/* New Arrivals Section */}
+            <div className="mb-6">
+              <SectionTitle title="New Arrivals" linkTo="/products?sort=newest" />
+              
+              {isLoading ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {Array(5).fill(0).map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                  {newArrivals.slice(0, 5).map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -470,4 +359,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default HomePage; 

@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
 // Main Admin Layout component that wraps all admin pages
-function AdminLayout({ children }) {
+function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Toggle sidebar visibility (especially for mobile)
@@ -30,7 +31,7 @@ function AdminLayout({ children }) {
         
         {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 p-0">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
