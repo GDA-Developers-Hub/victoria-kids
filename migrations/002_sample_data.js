@@ -29,7 +29,7 @@ const up = async (connection) => {
     
     // Insert sample categories
     await connection.query(`
-      INSERT INTO categories (name, slug, description, image) VALUES
+      INSERT INTO categories (name, slug, description, image_url) VALUES
       ('Clothing', 'clothing', 'Baby clothes and accessories', '/images/categories/clothing.jpg'),
       ('Furniture', 'furniture', 'Cribs, changing tables, and more', '/images/categories/furniture.jpg'),
       ('Feeding', 'feeding', 'Bottles, bibs, and other feeding supplies', '/images/categories/feeding.jpg'),
@@ -45,7 +45,7 @@ const up = async (connection) => {
     
     // Insert sample products
     await connection.query(`
-      INSERT INTO products (name, description, price, original_price, image, category_id, stock, rating, reviews, featured, is_new, is_budget, is_luxury) VALUES
+      INSERT INTO products (name, description, price, original_price, image_url, category_id, stock, rating, reviews, featured, is_new, is_budget, is_luxury) VALUES
       ('Baby Onesie', 'Soft cotton onesie for newborns', 19.99, 24.99, '/images/products/onesie1.jpg', 1, 15, 4.5, 28, TRUE, TRUE, FALSE, FALSE),
       ('Baby Crib', 'Convertible 4-in-1 crib that grows with your child', 299.99, 349.99, '/images/products/crib1.jpg', 2, 8, 4.8, 42, TRUE, FALSE, FALSE, TRUE),
       ('Baby Bottles Set', 'Set of 3 anti-colic baby bottles', 24.99, 29.99, '/images/products/bottles1.jpg', 3, 25, 4.3, 76, FALSE, FALSE, TRUE, FALSE),

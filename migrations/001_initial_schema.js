@@ -25,7 +25,7 @@ const up = async (connection) => {
       name VARCHAR(100) NOT NULL,
       slug VARCHAR(100) NOT NULL UNIQUE,
       description TEXT,
-      image VARCHAR(255),
+      image_url VARCHAR(255),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
@@ -39,7 +39,7 @@ const up = async (connection) => {
       description TEXT,
       price DECIMAL(10, 2) NOT NULL,
       original_price DECIMAL(10, 2),
-      image VARCHAR(255),
+      image_url VARCHAR(255),
       category_id INT,
       stock INT DEFAULT 0,
       rating DECIMAL(3, 1) DEFAULT 0,
