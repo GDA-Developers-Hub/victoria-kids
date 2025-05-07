@@ -251,11 +251,11 @@ const createProduct = async (req, res) => {
           stock, featured, is_new, is_budget, is_luxury
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          name,
-          description,
+      name,
+      description,
           parseFloat(price),
           parseFloat(originalPrice || price),
-          category_id,
+      category_id,
           parseInt(stock) || 0,
           featured === 'true' ? 1 : 0,
           is_new === 'true' ? 1 : 0,
@@ -303,8 +303,8 @@ const createProduct = async (req, res) => {
         ...productData[0],
         images: productImages
       };
-      
-      res.status(201).json(newProduct);
+    
+    res.status(201).json(newProduct);
     } catch (err) {
       // If there's an error, roll back the transaction
       await connection.rollback();
