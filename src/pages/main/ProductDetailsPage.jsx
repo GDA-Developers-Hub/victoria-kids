@@ -8,6 +8,7 @@ import { authService } from '../../utils/authService';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { cn } from '../../utils/utils';
+import placeholderImage from '../../assets/placeholder.webp';
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -44,7 +45,7 @@ const ProductDetailsPage = () => {
           // Handle original_price vs originalPrice
           originalPrice: product.original_price ? parseFloat(product.original_price) : product.originalPrice,
           // Handle images array or single image
-          images: product.images || (product.image ? [product.image] : ['/placeholder.svg']),
+          images: product.images || (product.image ? [product.image] : [placeholderImage]),
           // Default fields if missing
           rating: product.rating || 4, // Default rating if missing
           reviews: product.reviews || 0,
@@ -70,7 +71,7 @@ const ProductDetailsPage = () => {
           // Handle original_price vs originalPrice
           originalPrice: relProduct.original_price ? parseFloat(relProduct.original_price) : relProduct.originalPrice,
           // Handle images array or single image
-          images: relProduct.images || (relProduct.image ? [relProduct.image] : ['/placeholder.svg']),
+          images: relProduct.images || (relProduct.image ? [relProduct.image] : [placeholderImage]),
         }));
         
         setRelatedProducts(processedRelatedProducts);
@@ -182,9 +183,12 @@ const ProductDetailsPage = () => {
           <div className="flex flex-col gap-4">
             <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
               <img
-                src={product.images[0] || "/placeholder.svg"}
+                src={product.images[0] || placeholderImage}
                 alt={`${product.name}`}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = placeholderImage;
+                }}
               />
             </div>
 
@@ -198,9 +202,12 @@ const ProductDetailsPage = () => {
                   )}
                 >
                   <img
-                    src={image || "/placeholder.svg"}
+                    src={image || placeholderImage}
                     alt={`${product.name} - Thumbnail ${index + 1}`}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = placeholderImage;
+                    }}
                   />
                 </button>
               ))}
@@ -586,9 +593,12 @@ const ProductDetailsPage = () => {
                   <div className="overflow-hidden rounded-lg border bg-white">
                     <div className="relative aspect-square">
                       <img
-                        src={relatedProduct.images[0] || "/placeholder.svg"}
+                        src={relatedProduct.images[0] || placeholderImage}
                         alt={relatedProduct.name}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src = placeholderImage;
+                        }}
                       />
                       {relatedProduct.discount > 0 && (
                         <div className="absolute left-0 top-0 bg-[#e91e63] px-2 py-1 text-xs font-medium text-white">

@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // API base URL - change this to your actual backend URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://victoria-kids-production.up.railway.app/api';
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -133,11 +133,6 @@ export const api = {
     getBySlug: (slug) => apiClient.get(`/categories/slug/${slug}`),
     getFeatured: () => apiClient.get('/categories/featured'),
     getProducts: (slug) => apiClient.get(`/categories/${slug}/products`),
-    
-    // Admin category operations
-    create: (categoryData) => apiClient.post('/categories', categoryData),
-    update: (id, categoryData) => apiClient.put(`/categories/${id}`, categoryData),
-    delete: (id) => apiClient.delete(`/categories/${id}`),
   },
   
   // Cart endpoints
@@ -198,6 +193,18 @@ export const api = {
     add: (productId) => apiClient.post('/favorites', { product_id: String(productId) }),
     remove: (productId) => apiClient.delete(`/favorites/${String(productId)}`),
     check: (productId) => apiClient.get(`/favorites/check/${String(productId)}`),
+  },
+  
+  // Admin category operations
+  admin: {
+    categories: {
+      getAll: (params) => apiClient.get('/admin/categories', { params }),
+      getById: (id) => apiClient.get(`/admin/categories/${id}`),
+      create: (categoryData) => apiClient.post('/admin/categories', categoryData),
+      update: (id, categoryData) => apiClient.put(`/admin/categories/${id}`, categoryData),
+      delete: (id) => apiClient.delete(`/admin/categories/${id}`),
+    },
+    // ... other admin operations
   },
 };
 

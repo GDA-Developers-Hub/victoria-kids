@@ -7,6 +7,7 @@ import { cn, getProductImageUrl, calculateDiscount } from '../utils/utils';
 import { authService } from '../utils/authService';
 import { favoriteService } from '../utils/favoriteService';
 import { cartService } from '../utils/cartService';
+import placeholderImage from '../assets/placeholder.webp';
 
 /**
  * ProductCard component for displaying product information in a grid
@@ -83,39 +84,42 @@ const ProductCard = ({ product, className }) => {
     }
   };
 
-  // Function to determine which badge to show (prioritize in this order)
-  const getBadge = () => {
-    if (product.isNew || product.is_new) {
-      return { label: "New", bgColor: "bg-[#2196f3]" };
-    } else if (product.originalPrice || product.original_price) {
-      const originalPrice = parseFloat(product.originalPrice || product.original_price);
-      const currentPrice = parseFloat(product.price);
-      const discount = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
-      return { label: `${discount}% OFF`, bgColor: "bg-[#e91e63]" };
-    } else if (product.isBudget) {
-      return { label: "Budget", bgColor: "bg-[#4caf50]" };
-    } else if (product.isLuxury) {
-      return { label: "Luxury", bgColor: "bg-[#9c27b0]" };
-    }
-    return null;
-  };
+  // Get the primary image or first image from the array
+  const displayImage = Array.isArray(product.images) && product.images.length > 0
+    ? product.images[0]
+    : product.image || placeholderImage;
 
-  const badge = getBadge();
+  // Calculate discount percentage if original price exists
+  const discountPercentage = product.original_price
+    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+    : 0;
 
   return (
     <Card className={cn("overflow-hidden bg-white border-0 shadow-sm rounded-lg", className)}>
-      <Link to={`/products/${product.id}`}>
-        <div className="relative aspect-square overflow-hidden">
-          <img
-            src={getProductImageUrl(product)}
-            alt={product.name}
-            className="object-cover w-full h-full"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = '/placeholder.svg';
-            }}
-          />
-          
+      <Link to={`/products/${product.id}`} className="group">
+        <div className="relative overflow-hidden rounded-lg border bg-white">
+          {/* Image */}
+          <div className="aspect-square overflow-hidden">
+            <img
+              src={displayImage}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                e.target.src = placeholderImage;
+              }}
+            />
+          </div>
+
+          {/* Badges */}
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
+            {discountPercentage > 0 && (
+              <Badge className="bg-red-500">-{discountPercentage}%</Badge>
+            )}
+            {product.is_new && (
+              <Badge className="bg-blue-500">New</Badge>
+            )}
+          </div>
+
           {/* Heart/Favorite button */}
           <button
             className="absolute right-2 top-2 rounded-full bg-white p-1.5 shadow-sm"
@@ -138,12 +142,30 @@ const ProductCard = ({ product, className }) => {
             </svg>
           </button>
 
-          {/* Badge (New, OFF, etc) - only show one based on priority */}
-          {badge && (
-            <div className={`absolute left-0 top-3 ${badge.bgColor} text-white text-xs py-1 px-2 rounded-r-full font-medium`}>
-              {badge.label}
+          {/* Product Info */}
+          <div className="p-3">
+            <h3 className="font-medium text-sm text-gray-700 line-clamp-1">
+              {product.name}
+            </h3>
+            
+            <div className="mt-1 flex items-center gap-2">
+              <span className="text-lg font-bold text-[#e91e63]">
+                KSh {product.price.toLocaleString()}
+              </span>
+              {product.original_price && (
+                <span className="text-sm text-gray-500 line-through">
+                  KSh {product.original_price.toLocaleString()}
+                </span>
+              )}
             </div>
-          )}
+
+            {/* Stock Status */}
+            {product.stock <= 0 ? (
+              <span className="text-xs text-red-500 mt-1 block">Out of Stock</span>
+            ) : product.stock <= 5 ? (
+              <span className="text-xs text-orange-500 mt-1 block">Low Stock</span>
+            ) : null}
+          </div>
         </div>
       </Link>
 
@@ -172,43 +194,30 @@ const ProductCard = ({ product, className }) => {
           </div>
         </div>
 
-        <h3 className="font-medium text-sm line-clamp-2 mb-1">{product.name}</h3>
-        
         <div className="flex items-center justify-between">
           <div>
-            {product.originalPrice || product.original_price ? (
-              <div className="flex flex-col">
-                <span className="font-bold text-sm">KSh {parseFloat(product.price).toFixed(2)}</span>
-                <span className="text-xs text-gray-500 line-through">
-                  KSh {parseFloat(product.originalPrice || product.original_price).toFixed(2)}
-                </span>
-              </div>
-            ) : (
-              <span className="font-bold text-sm">KSh {parseFloat(product.price).toFixed(2)}</span>
-            )}
-          </div>
-          
-          {/* Add to Cart Button */}
-          <button 
-            className="bg-white rounded-full p-1.5 border border-gray-200 shadow-sm"
-            onClick={handleAddToCart}
-            disabled={isAddingToCart || product.stock <= 0}
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="h-4 w-4 text-gray-700"
+            {/* Add to Cart Button */}
+            <button 
+              className="bg-white rounded-full p-1.5 border border-gray-200 shadow-sm"
+              onClick={handleAddToCart}
+              disabled={isAddingToCart || product.stock <= 0}
             >
-              <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-            </svg>
-          </button>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="h-4 w-4 text-gray-700"
+              >
+                <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -3,6 +3,7 @@ import adminService from "../../../utils/adminService";
 import { toast } from "../../../utils/api";
 import { getProductImageUrl } from "../../../utils/imageUtils";
 import { Link } from "react-router-dom";
+import placeholderImage from "../../../assets/placeholder.webp";
 
 function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -127,11 +128,11 @@ function AdminProductsPage() {
                         <td className="p-4 align-middle">
                           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-md">
                             <img
-                              src={getProductImageUrl(product.imageUrl)}
+                              src={product.image || placeholderImage}
                               alt={product.name}
                               className="h-full w-full object-cover"
                               onError={(e) => {
-                                e.target.src = '/placeholder-image.jpg';
+                                e.target.src = placeholderImage;
                               }}
                             />
                           </div>

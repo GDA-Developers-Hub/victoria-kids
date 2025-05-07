@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="Victoria Kids Logo" width={40} height={40} className="rounded-full" />
+                {/* <img src="/logo.png" alt="Victoria Kids Logo" width={40} height={40} className="rounded-full" /> */}
                 <span className="font-bold text-xl">
                   <span className="text-[#e91e63]">Victoria</span> <span className="text-[#4caf50]">KIDS</span>
                 </span>

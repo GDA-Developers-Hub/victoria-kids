@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { categoryService } from '../../utils/categoryService';
 import { productService } from '../../utils/productService';
+import placeholderImage from '../../assets/placeholder.webp';
 
 /**
  * Categories page component displaying all product categories fetched from API
@@ -51,7 +52,7 @@ const CategoriesPage = () => {
     loadData();
   }, []);
 
-  // Placeholder for popular collections - replace with dynamic data if needed
+  // Update placeholder collections with proper image handling
   const popularCollections = [
     { name: 'New Arrivals', image: '/collections/new-arrivals.jpg', url: '/products?filter=new' },
     { name: 'Budget Picks', image: '/collections/budget-picks.jpg', url: '/products?filter=budget' },
@@ -89,7 +90,7 @@ const CategoriesPage = () => {
               key={category.id}
               to={`/products?category=${category.slug}`}
               className="group relative overflow-hidden rounded-lg h-64 flex items-end justify-start text-left bg-cover bg-center"
-              style={{ backgroundImage: `url(${category.image || '/placeholder.svg'})` }}
+              style={{ backgroundImage: `url(${category.image || placeholderImage})` }}
             >
               <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-opacity" />
               <div className="relative w-full p-5 md:p-6">
@@ -117,12 +118,11 @@ const CategoriesPage = () => {
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
-                  src={category.image || '/placeholder.svg'}
+                  src={category.image || placeholderImage}
                   alt={category.name}
                   className="object-cover w-full h-full transition-transform group-hover:scale-105"
                   onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = '/placeholder.svg';
+                    e.target.src = placeholderImage;
                   }}
                 />
               </div>
@@ -148,12 +148,11 @@ const CategoriesPage = () => {
           >
             <div className="relative aspect-video overflow-hidden">
               <img
-                src={collection.image || '/placeholder.svg'}
+                src={collection.image || placeholderImage}
                 alt={collection.name}
                 className="object-cover w-full h-full transition-transform group-hover:scale-105"
                 onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '/placeholder.svg';
+                  e.target.src = placeholderImage;
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
@@ -190,8 +189,7 @@ const CategoriesPage = () => {
               alt="Seasonal baby products" 
               className="rounded-lg shadow-md"
               onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/placeholder.svg';
+                e.target.src = placeholderImage;
               }}
             />
           </div>

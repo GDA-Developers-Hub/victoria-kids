@@ -125,7 +125,7 @@ const AboutPage = () => {
       </div>
 
       {/* Our Team */}
-      <div className="mb-16">
+      {/* <div className="mb-16">
         <h2 className="text-3xl font-bold mb-8 text-center">Meet Our Team</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
@@ -162,7 +162,7 @@ const AboutPage = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Call to Action */}
       <div className="bg-[#f3e5f5] rounded-lg p-8 text-center">

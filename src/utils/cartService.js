@@ -13,7 +13,7 @@ class CartService {
 
   /**
    * Check if user is authenticated
-   * @returns {boolean} - Authentication status
+   * @returns {boolean}
    */
   isAuthenticated() {
     return authService.isAuthenticated();
@@ -28,7 +28,7 @@ class CartService {
       // If authenticated, get cart from API
       if (this.isAuthenticated()) {
         const response = await api.cart.get();
-        return response.items || [];
+        return response || [];
       }
       
       // Otherwise, get from local storage
@@ -86,7 +86,7 @@ class CartService {
       if (this.isAuthenticated()) {
         const response = await api.cart.addItem(productIdStr, quantity, options);
         toast.success('Product added to cart');
-        return response.items || [];
+        return response || [];
       }
       
       // Otherwise, use local storage
@@ -144,7 +144,7 @@ class CartService {
       if (this.isAuthenticated()) {
         const response = await api.cart.updateItem(productId, quantity);
         toast.success('Cart updated');
-        return response.items || [];
+        return response || [];
       }
       
       // Otherwise, use local storage
@@ -190,7 +190,7 @@ class CartService {
       if (this.isAuthenticated()) {
         const response = await api.cart.removeItem(productId);
         toast.success('Item removed from cart');
-        return response.items || [];
+        return response || [];
       }
       
       // Otherwise, use local storage
@@ -261,7 +261,8 @@ class CartService {
       
       // If local cart is empty, just return the server cart
       if (localCart.length === 0) {
-        return (await api.cart.get()).items || [];
+        const response = await api.cart.get();
+        return response || [];
       }
       
       // Otherwise, add each local item to the server cart
@@ -275,7 +276,8 @@ class CartService {
       }
       
       // Return updated server cart
-      return (await api.cart.get()).items || [];
+      const response = await api.cart.get();
+      return response || [];
     } catch (error) {
       console.error('Error syncing cart after login:', error);
       return this.getCart(); // Fall back to whatever cart we can retrieve

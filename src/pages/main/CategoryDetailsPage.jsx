@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { categoryService } from '../../utils/categoryService';
 import { productService } from '../../utils/productService';
+import placeholderImage from '../../assets/placeholder.webp';
 
 const CategoryDetailsPage = () => {
   const { slug } = useParams();
@@ -28,7 +29,14 @@ const CategoryDetailsPage = () => {
         
         // Get products for this category - use slug instead of name
         const { products } = await categoryService.getProductsByCategory(slug);
-        setProducts(products);
+        
+        // Process products to ensure consistent image handling
+        const processedProducts = products.map(product => ({
+          ...product,
+          images: product.images || (product.image ? [product.image] : [placeholderImage])
+        }));
+        
+        setProducts(processedProducts);
       } catch (err) {
         console.error('Error fetching category:', err);
         setError('Failed to load category. Please try again.');
@@ -87,13 +95,11 @@ const CategoryDetailsPage = () => {
               <div className="overflow-hidden rounded-lg border bg-white">
                 <div className="relative aspect-square">
                   <img
-                    src={(product.images && Array.isArray(product.images) && product.images[0]) || 
-                      product.image || "/placeholder.svg"}
+                    src={(product.images && Array.isArray(product.images) && product.images[0]) || placeholderImage}
                     alt={product.name || "Product"}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/placeholder.svg';
+                      e.target.src = placeholderImage;
                     }}
                   />
                   {product.discount > 0 && (

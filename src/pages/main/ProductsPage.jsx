@@ -5,6 +5,7 @@ import { categoryService } from '../../utils/categoryService';
 import ProductCard from '../../components/ProductCard';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import placeholderImage from '../../assets/placeholder.webp';
 
 /**
  * Products page component displaying product listings with filtering and pagination
@@ -105,7 +106,13 @@ const ProductsPage = () => {
           order,
         });
         
-        setProducts(result?.data || []);
+        // Process the products to ensure consistent image handling
+        const processedProducts = (result?.data || []).map(product => ({
+          ...product,
+          images: product.images || (product.image ? [product.image] : [placeholderImage])
+        }));
+        
+        setProducts(processedProducts);
         setTotalProducts(result?.total || 0);
       } catch (error) {
         console.error('Error loading products:', error);

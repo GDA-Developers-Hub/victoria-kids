@@ -4,6 +4,7 @@ import { toast } from "../../../utils/api";
 import adminService from "../../../utils/adminService";
 import ImageUploader from "../../../utils/imageUploader";
 import { slugify } from "../../../utils/stringUtils";
+import placeholderImage from "../../../assets/placeholder.webp";
 
 const CategoryForm = () => {
   const { id } = useParams();
@@ -221,9 +222,12 @@ const CategoryForm = () => {
                 {formData.imageUrl && (
                   <div className="relative">
                     <img 
-                      src={formData.imageUrl} 
+                      src={formData.imageUrl || placeholderImage} 
                       alt="Category"
                       className="w-full max-w-xs h-auto rounded-md object-cover"
+                      onError={(e) => {
+                        e.target.src = placeholderImage;
+                      }}
                     />
                     <button
                       type="button"

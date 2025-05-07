@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import adminService from "../../../utils/adminService";
 import { toast } from "../../../utils/api";
-import { getCategoryImageUrl } from "../../../utils/imageUtils";
+import placeholderImg from "../../../assets/placeholder.webp";
 
 function AdminCategoriesPage() {
   const navigate = useNavigate();
@@ -100,11 +100,11 @@ function AdminCategoriesPage() {
                         <td className="p-4 align-middle">
                           <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-md">
                     <img
-                              src={category.imageUrl || category.image} 
+                              src={category.image || placeholderImg} 
                       alt={category.name}
                               className="h-full w-full object-cover"
                       onError={(e) => {
-                                e.target.src = '/placeholder.jpg';
+                                e.target.src = placeholderImg;
                       }}
                     />
                   </div>

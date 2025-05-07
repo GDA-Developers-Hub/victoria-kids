@@ -248,33 +248,25 @@ const ContactPage = () => {
       </div>
       
       {/* Map Section */}
-      <div className="mt-12">
-        <h2 className="text-xl font-bold mb-4">Find Us</h2>
-        <div className="rounded-lg overflow-hidden border h-64 md:h-80">
-          {/* Placeholder for map - in a real implementation, this would be a Google Maps or other map component */}
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <p className="text-muted-foreground">Map integration would be here in a real implementation</p>
-          </div>
-        </div>
-      </div>
+      
       
       {/* FAQ Section */}
       <div className="mt-12">
         <h2 className="text-xl font-bold mb-6">Frequently Asked Questions</h2>
         <div className="space-y-4">
           {[
-            {
-              question: 'What payment methods do you accept?',
-              answer: 'We accept Visa, Mastercard, M-Pesa, and bank transfers. All transactions are secure and encrypted.'
-            },
+            // {
+            //   question: 'What payment methods do you accept?',
+            //   answer: 'We accept Visa, Mastercard, M-Pesa, and bank transfers. All transactions are secure and encrypted.'
+            // },
             {
               question: 'How long does shipping take?',
               answer: 'Shipping within Nairobi takes 1-2 business days. Shipping to other locations in Kenya takes 3-5 business days.'
             },
-            {
-              question: 'Do you offer international shipping?',
-              answer: 'Yes, we offer international shipping to selected countries in East Africa. Please contact us for more information.'
-            },
+            // {
+            //   question: 'Do you offer international shipping?',
+            //   answer: 'Yes, we offer international shipping to selected countries in East Africa. Please contact us for more information.'
+            // },
             {
               question: 'What is your return policy?',
               answer: 'We accept returns within 14 days of purchase. Items must be unused and in their original packaging.'

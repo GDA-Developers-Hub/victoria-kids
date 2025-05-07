@@ -17,7 +17,7 @@ const ProductForm = () => {
     original_price: "",
     stock: "",
     category: "",
-    imageUrl: "",
+    images: [],
     is_new: false,
     is_featured: false,
     status: "active"
@@ -47,7 +47,7 @@ const ProductForm = () => {
               original_price: productData.original_price || "",
               stock: productData.stock || "",
               category: productData.category_id || "",
-              imageUrl: productData.imageUrl || "",
+              images: productData.images || [],
               is_new: productData.is_new || false,
               is_featured: productData.is_featured || false,
               status: productData.status || "active"
@@ -76,7 +76,14 @@ const ProductForm = () => {
   const handleImageSave = (url) => {
     setFormData({
       ...formData,
-      imageUrl: url
+      images: [...formData.images, url]
+    });
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_, index) => index !== indexToRemove)
     });
   };
   
@@ -294,19 +301,19 @@ const ProductForm = () => {
           
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Product Image</label>
+            <label className="text-sm font-medium">Product Images</label>
             <div className="border rounded-md p-4">
-              <div className="flex flex-col items-center space-y-4">
-                {formData.imageUrl && (
-                  <div className="relative">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {formData.images.map((imageUrl, index) => (
+                  <div key={index} className="relative">
                     <img 
-                      src={formData.imageUrl} 
-                      alt="Product"
-                      className="w-full max-w-xs h-auto rounded-md object-cover"
+                      src={imageUrl} 
+                      alt={`Product ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-md"
                     />
                     <button
                       type="button"
-                      onClick={() => setFormData({ ...formData, imageUrl: "" })}
+                      onClick={() => handleRemoveImage(index)}
                       className="absolute top-2 right-2 bg-red-500 rounded-full text-white p-1 shadow-sm hover:bg-red-600"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -315,10 +322,10 @@ const ProductForm = () => {
                       </svg>
                     </button>
                   </div>
-                )}
-                {!formData.imageUrl && (
+                ))}
+                <div className="flex items-center justify-center border-2 border-dashed rounded-md h-32">
                   <ImageUploader onSaveUrl={handleImageSave} />
-                )}
+                </div>
               </div>
             </div>
           </div>

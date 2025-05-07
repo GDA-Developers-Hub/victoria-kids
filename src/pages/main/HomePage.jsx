@@ -9,6 +9,7 @@ import banner from '../../assets/baby1.jpg';
 import banner2 from '../../assets/banner1.jpg';
 import banner3 from '../../assets/banner2.avif';
 import banner4 from '../../assets/pump.jpg';
+import placeholderImg from '../../assets/placeholder.webp';
 /**
  * Home page component displaying hero section, featured products, and categories
  */
@@ -142,11 +143,11 @@ const HomePage = () => {
                     >
                       <div className="w-8 h-8 rounded-md overflow-hidden mr-3">
                         <img 
-                          src={category.image || `/categories/${category.slug}.jpg`} 
+                          src={category.image || placeholderImg}
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           onError={(e) => {
-                            e.target.src = '/placeholder.jpg';
+                            e.target.src = placeholderImg;
                           }}
                         />
                       </div>
@@ -235,11 +236,11 @@ const HomePage = () => {
                       >
                         <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 mb-1">
                           <img 
-                            src={category.image || `/categories/${category.slug}.jpg`} 
+                            src={category.image || placeholderImg}
                             alt={category.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.target.src = '/placeholder.jpg';
+                              e.target.src = placeholderImg;
                             }}
                           />
                         </div>

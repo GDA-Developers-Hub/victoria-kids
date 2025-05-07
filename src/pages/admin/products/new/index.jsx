@@ -8,7 +8,7 @@ import { Badge } from '../../../../components/ui/badge';
 import { productService } from '../../../../utils/productService';
 import { categoryService } from '../../../../utils/categoryService';
 import adminService from '../../../../utils/adminService';
-import AdminLayout from '../../../../components/admin/AdminLayout';
+// import AdminLayout from '../../../../components/admin/AdminLayout';
 import ImageUploader from '../../../../utils/imageUploader';
 
 const NewProductPage = () => {
@@ -193,7 +193,7 @@ const NewProductPage = () => {
   };
 
   return (
-    <AdminLayout>
+    // <AdminLayout>
       <div className="container px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -576,7 +576,7 @@ const NewProductPage = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+
   );
 };
 
