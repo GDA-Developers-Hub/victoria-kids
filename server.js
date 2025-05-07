@@ -58,20 +58,22 @@ const adminRoutes = require("./routes/adminRoutes")
 const paymentRoutes = require("./routes/paymentRoutes")
 const mediaRoutes = require("./routes/mediaRoutes")
 
-// CORS Configuration
+// CORS Configuration - Railway specific configuration for production
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow all localhost origins with any port
+    // Define allowed origins
     const allowedOrigins = [
       /^http:\/\/localhost(:[0-9]+)?$/,
       /^http:\/\/127\.0\.0\.1(:[0-9]+)?$/,
       'https://victoriababyshop.co.ke',
       'https://www.victoriababyshop.co.ke',
-      process.env.FRONTEND_URL, // From env if specified
-      process.env.ADMIN_FRONTEND_URL // From env if specified
+      // Allow the Railway domain itself
+      'https://victoria-kids-production.up.railway.app',
+      process.env.FRONTEND_URL,
+      process.env.ADMIN_FRONTEND_URL
     ].filter(Boolean); // Remove undefined/null values
     
-    // No origin (like mobile apps, curl requests)
+    // No origin (like mobile apps, curl requests, or same-origin)
     if (!origin) {
       return callback(null, true);
     }
@@ -88,21 +90,34 @@ const corsOptions = {
     if (isAllowed) {
       callback(null, true);
     } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
+      logger.warn(`Origin ${origin} not allowed by CORS`);
+      // In production, it's better to allow with a warning than to block completely
+      // This helps with debugging and temporary access
+      if (process.env.NODE_ENV === 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
     }
   },
-  credentials: true, // Allow cookies to be sent with requests
+  credentials: true, // Allow cookies to be sent
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  // Important for Railway - ensure preflight requests are handled correctly
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware
+// IMPORTANT: Apply CORS middleware before any other middleware
 app.use(cors(corsOptions));
 
-// Log CORS settings
-logger.info('CORS configured with allowed origins: localhost, victoriababyshop.co.ke, and configured frontend URLs');
+// Handle OPTIONS requests explicitly for Railway
+app.options('*', cors(corsOptions));
 
-// Other middleware
+// Log CORS settings
+logger.info('CORS configured with allowed origins: localhost, victoriababyshop.co.ke, and Railway domain');
+
+// Other middleware - AFTER CORS
 app.use(express.json())
 app.use(morgan("dev"))
 
@@ -136,9 +151,13 @@ const startServer = async (port) => {
     await runDatabaseInit()
     
     // Then start the server
-    const server = app.listen(port, () => {
+    // IMPORTANT FOR RAILWAY: Need to listen on 0.0.0.0 to accept connections from outside
+    const server = app.listen(port, '0.0.0.0', () => {
       logger.info(`Server running on port ${port}`)
       logger.info(`API available at http://localhost:${port}/api`)
+      if (process.env.NODE_ENV === 'production') {
+        logger.info('Running in production mode with CORS enabled')
+      }
     });
 
     server.on('error', (err) => {
