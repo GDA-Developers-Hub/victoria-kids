@@ -4,6 +4,54 @@
  */
 
 const up = async (connection) => {
+  // First ensure tables exist
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) NOT NULL UNIQUE,
+      password VARCHAR(100) NOT NULL,
+      phone VARCHAR(20),
+      role ENUM('customer', 'admin') DEFAULT 'customer',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS categories (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      slug VARCHAR(100) NOT NULL UNIQUE,
+      description TEXT,
+      image_url VARCHAR(255),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS products (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      description TEXT,
+      price DECIMAL(10, 2) NOT NULL,
+      original_price DECIMAL(10, 2),
+      image_url VARCHAR(255),
+      category_id INT,
+      stock INT DEFAULT 0,
+      rating DECIMAL(3, 1) DEFAULT 0,
+      reviews INT DEFAULT 0,
+      featured BOOLEAN DEFAULT FALSE,
+      is_new BOOLEAN DEFAULT FALSE,
+      is_budget BOOLEAN DEFAULT FALSE,
+      is_luxury BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+    )
+  `);
+
   // Check if we already have users
   const [usersResult] = await connection.query('SELECT COUNT(*) as count FROM users');
   if (usersResult[0].count === 0) {

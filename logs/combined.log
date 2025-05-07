@@ -3725,3 +3725,41 @@
 {"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","level":"error","message":"Email service error: getaddrinfo ENOTFOUND smtp.example.com","service":"victoria-kids-api","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","syscall":"getaddrinfo","timestamp":"2025-05-07 05:38:18"}
 {"level":"info","message":"Database connection established successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:20"}
 {"level":"info","message":"Database railway created or already exists","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:20"}
+{"level":"info","message":"Environment variables loaded:","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:39"}
+{"level":"info","message":"NODE_ENV: development","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:39"}
+{"level":"info","message":"PORT: 5000","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:39"}
+{"level":"info","message":"JWT_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:39"}
+{"level":"info","message":"JWT_REFRESH_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:39"}
+{"level":"info","message":"Starting database initialization...","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:42"}
+{"level":"info","message":"Found initDb.js at: C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\config\\initDb.js","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:42"}
+{"level":"info","message":"Database initialization completed","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:42"}
+{"level":"info","message":"Server running on port 5000","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:42"}
+{"level":"info","message":"API available at http://localhost:5000/api","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:42"}
+{"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","level":"error","message":"Email service error: getaddrinfo ENOTFOUND smtp.example.com","service":"victoria-kids-api","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","syscall":"getaddrinfo","timestamp":"2025-05-07 05:38:43"}
+{"level":"info","message":"Database connection established successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:44"}
+{"level":"info","message":"Database railway created or already exists","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:44"}
+{"level":"info","message":"Database tables created successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:52"}
+{"level":"info","message":"Admin user already exists","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:53"}
+{"level":"info","message":"Admin password updated for admin@victoriakids.com","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:53"}
+{"level":"info","message":"Database initialization completed successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:38:53"}
+{"level":"info","message":"Environment variables loaded:","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:28"}
+{"level":"info","message":"NODE_ENV: development","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:28"}
+{"level":"info","message":"PORT: 5000","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:28"}
+{"level":"info","message":"JWT_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:28"}
+{"level":"info","message":"JWT_REFRESH_SECRET exists: true","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:28"}
+{"level":"info","message":"Starting database initialization...","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:31"}
+{"level":"info","message":"Found initDb.js at: C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\config\\initDb.js","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:31"}
+{"level":"info","message":"Database initialization completed","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:31"}
+{"level":"info","message":"Server running on port 5000","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:31"}
+{"level":"info","message":"API available at http://localhost:5000/api","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:31"}
+{"code":"EDNS","command":"CONN","errno":-3008,"hostname":"smtp.example.com","level":"error","message":"Email service error: getaddrinfo ENOTFOUND smtp.example.com","service":"victoria-kids-api","stack":"Error: getaddrinfo ENOTFOUND smtp.example.com\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:120:26)","syscall":"getaddrinfo","timestamp":"2025-05-07 05:44:32"}
+{"level":"info","message":"Database connection established successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:33"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:33"}
+{"level":"info","message":"Database railway created or already exists","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:33"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"level":"error","message":"Unknown column 'p.image_url' in 'field list'","service":"victoria-kids-api","sql":"SELECT \n        p.id, \n        p.name, \n        SUM(oi.quantity) as total_sold, \n        p.image_url\n      FROM order_items oi\n      JOIN products p ON oi.product_id = p.id\n      JOIN orders o ON oi.order_id = o.id\n      WHERE o.payment_status = \"paid\"\n      GROUP BY p.id, p.name, p.image_url\n      ORDER BY total_sold DESC\n      LIMIT 3","sqlMessage":"Unknown column 'p.image_url' in 'field list'","sqlState":"42S22","stack":"Error: Unknown column 'p.image_url' in 'field list'\n    at PromisePool.query (C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\node_modules\\mysql2\\lib\\promise\\pool.js:36:22)\n    at getDashboardStats (C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\controllers\\adminController.js:55:38)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-05-07 05:44:35"}
+{"level":"info","message":"Development mode: Auto-authorizing admin request to /api/admin/dashboard/stats","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:35"}
+{"code":"ER_BAD_FIELD_ERROR","errno":1054,"level":"error","message":"Unknown column 'p.image_url' in 'field list'","service":"victoria-kids-api","sql":"SELECT \n        p.id, \n        p.name, \n        SUM(oi.quantity) as total_sold, \n        p.image_url\n      FROM order_items oi\n      JOIN products p ON oi.product_id = p.id\n      JOIN orders o ON oi.order_id = o.id\n      WHERE o.payment_status = \"paid\"\n      GROUP BY p.id, p.name, p.image_url\n      ORDER BY total_sold DESC\n      LIMIT 3","sqlMessage":"Unknown column 'p.image_url' in 'field list'","sqlState":"42S22","stack":"Error: Unknown column 'p.image_url' in 'field list'\n    at PromisePool.query (C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\node_modules\\mysql2\\lib\\promise\\pool.js:36:22)\n    at getDashboardStats (C:\\Users\\hp\\Desktop\\Victoria Kids\\backend\\controllers\\adminController.js:55:38)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-05-07 05:44:37"}
+{"level":"info","message":"Database tables created successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:39"}
+{"level":"info","message":"Admin user already exists","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:39"}
+{"level":"info","message":"Admin password updated for admin@victoriakids.com","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:40"}
+{"level":"info","message":"Database initialization completed successfully","service":"victoria-kids-api","timestamp":"2025-05-07 05:44:40"}
