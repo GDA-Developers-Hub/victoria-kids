@@ -57,12 +57,12 @@ const getDashboardStats = async (req, res) => {
         p.id, 
         p.name, 
         SUM(oi.quantity) as total_sold, 
-        p.image
+        p.image as image
       FROM order_items oi
       JOIN products p ON oi.product_id = p.id
       JOIN orders o ON oi.order_id = o.id
       WHERE o.payment_status = "paid"
-      GROUP BY p.id, p.name
+      GROUP BY p.id, p.name, p.image
       ORDER BY total_sold DESC
       LIMIT 3`
     );
@@ -129,7 +129,7 @@ const getLowStockProducts = async (req, res) => {
         p.stock, 
         p.price,
         c.name as category_name,
-        p.image
+        p.image as image
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE p.stock <= ?

@@ -29,12 +29,12 @@ const up = async (connection) => {
     
     // Insert sample categories
     await connection.query(`
-      INSERT INTO categories (name, description, image) VALUES
-      ('Clothing', 'Baby clothes and accessories', '/images/categories/clothing.jpg'),
-      ('Furniture', 'Cribs, changing tables, and more', '/images/categories/furniture.jpg'),
-      ('Feeding', 'Bottles, bibs, and other feeding supplies', '/images/categories/feeding.jpg'),
-      ('Toys', 'Educational and fun toys for all ages', '/images/categories/toys.jpg'),
-      ('Electronics', 'Monitors, humidifiers, and other electronics', '/images/categories/electronics.jpg')
+      INSERT INTO categories (name, slug, description, image) VALUES
+      ('Clothing', 'clothing', 'Baby clothes and accessories', '/images/categories/clothing.jpg'),
+      ('Furniture', 'furniture', 'Cribs, changing tables, and more', '/images/categories/furniture.jpg'),
+      ('Feeding', 'feeding', 'Bottles, bibs, and other feeding supplies', '/images/categories/feeding.jpg'),
+      ('Toys', 'toys', 'Educational and fun toys for all ages', '/images/categories/toys.jpg'),
+      ('Electronics', 'electronics', 'Monitors, humidifiers, and other electronics', '/images/categories/electronics.jpg')
     `);
   }
   
