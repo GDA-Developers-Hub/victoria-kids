@@ -19,6 +19,32 @@ logger.info('PORT: ' + process.env.PORT)
 logger.info('JWT_SECRET exists: ' + !!process.env.JWT_SECRET)
 logger.info('JWT_REFRESH_SECRET exists: ' + !!process.env.JWT_REFRESH_SECRET)
 
+// CORS Configuration
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://victoriababyshop.co.ke',
+  'https://www.victoriababyshop.co.ke'
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Function to run the database initialization
 const runDatabaseInit = async () => {
   try {
@@ -59,7 +85,7 @@ const paymentRoutes = require("./routes/paymentRoutes")
 const mediaRoutes = require("./routes/mediaRoutes")
 
 // Middleware
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(morgan("dev"))
 

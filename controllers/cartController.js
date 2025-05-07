@@ -3,53 +3,8 @@
  * Handles all cart-related operations
  */
 
-// Mock product data (simplified)
-const products = [
-  {
-    id: "1",
-    name: "Baby Onesie",
-    price: 19.99,
-    image: "/images/products/onesie1.jpg",
-    stock: 15,
-  },
-  {
-    id: "2",
-    name: "Baby Crib",
-    price: 299.99,
-    image: "/images/products/crib1.jpg",
-    stock: 8,
-  },
-  {
-    id: "3",
-    name: "Baby Bottles Set",
-    price: 24.99,
-    image: "/images/products/bottles1.jpg",
-    stock: 25,
-  },
-];
-
-// Mock cart data for development
-// In a real app, this would be in a database
-const carts = {
-  "1": [ // user_id: 1
-    {
-      id: "cart_item_1",
-      product_id: "1",
-      name: "Baby Onesie",
-      price: 19.99,
-      quantity: 2,
-      image: "/images/products/onesie1.jpg",
-    },
-    {
-      id: "cart_item_2",
-      product_id: "3",
-      name: "Baby Bottles Set",
-      price: 24.99,
-      quantity: 1,
-      image: "/images/products/bottles1.jpg",
-    },
-  ],
-};
+const pool = require('../config/db');
+const logger = require('../utils/logger');
 
 /**
  * @desc    Get cart items for the current user
@@ -58,15 +13,25 @@ const carts = {
  */
 const getCartItems = async (req, res) => {
   try {
-    // In a real app, this would be req.user.id
-    const userId = "1";
+    const userId = req.user.id;
     
-    // Get the user's cart, or initialize empty cart if none exists
-    const cart = carts[userId] || [];
+    // Get cart items with product details
+    const [cartItems] = await pool.query(
+      `SELECT c.id, c.product_id, c.quantity, 
+       p.name, p.description, p.price, p.original_price, p.stock,
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       cat.name as category_name
+       FROM cart_items c
+       JOIN products p ON c.product_id = p.id
+       LEFT JOIN categories cat ON p.category_id = cat.id
+       WHERE c.user_id = ?`,
+      [userId]
+    );
     
-    res.json(cart);
+    res.json(cartItems);
   } catch (error) {
-    console.error('Error fetching cart:', error);
+    logger.error('Error fetching cart:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -79,63 +44,71 @@ const getCartItems = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const { product_id, quantity = 1 } = req.body;
+    const userId = req.user.id;
     
     if (!product_id) {
       return res.status(400).json({ message: 'Product ID is required' });
     }
     
-    // In a real app, this would be req.user.id
-    const userId = "1";
+    // Check if product exists and has enough stock
+    const [products] = await pool.query(
+      'SELECT id, stock FROM products WHERE id = ?',
+      [product_id]
+    );
     
-    // Find the product
-    const product = products.find(p => p.id === product_id);
-    
-    if (!product) {
+    if (products.length === 0) {
       return res.status(404).json({ message: 'Product not found' });
     }
     
-    // Check if product is in stock
+    const product = products[0];
+    
     if (product.stock < quantity) {
       return res.status(400).json({ message: 'Product is out of stock' });
     }
     
-    // Initialize cart if it doesn't exist
-    if (!carts[userId]) {
-      carts[userId] = [];
-    }
+    // Check if product is already in cart
+    const [existingItems] = await pool.query(
+      'SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?',
+      [userId, product_id]
+    );
     
-    // Check if the product is already in the cart
-    const existingItemIndex = carts[userId].findIndex(item => item.product_id === product_id);
-    
-    if (existingItemIndex !== -1) {
-      // Update quantity if the product is already in the cart
-      const newQuantity = carts[userId][existingItemIndex].quantity + quantity;
+    if (existingItems.length > 0) {
+      // Update quantity if product is already in cart
+      const newQuantity = existingItems[0].quantity + quantity;
       
-      // Check if the new quantity exceeds stock
       if (newQuantity > product.stock) {
         return res.status(400).json({ message: 'Cannot add more than available stock' });
       }
       
-      carts[userId][existingItemIndex].quantity = newQuantity;
-      
-      res.json(carts[userId]);
+      await pool.query(
+        'UPDATE cart_items SET quantity = ? WHERE user_id = ? AND product_id = ?',
+        [newQuantity, userId, product_id]
+      );
     } else {
       // Add new item to cart
-      const newItem = {
-        id: `cart_item_${Date.now()}`,
-        product_id,
-        name: product.name,
-        price: product.price,
-        quantity,
-        image: product.image,
-      };
-      
-      carts[userId].push(newItem);
-      
-      res.status(201).json(carts[userId]);
+      await pool.query(
+        'INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)',
+        [userId, product_id, quantity]
+      );
     }
+    
+    // Get updated cart items
+    const [cartItems] = await pool.query(
+      `SELECT c.id, c.product_id, c.quantity, 
+       p.name, p.description, p.price, p.original_price, p.stock,
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       cat.name as category_name
+       FROM cart_items c
+       JOIN products p ON c.product_id = p.id
+       LEFT JOIN categories cat ON p.category_id = cat.id
+       WHERE c.user_id = ?`,
+      [userId]
+    );
+    
+    res.status(201).json(cartItems);
   } catch (error) {
-    console.error('Error adding to cart:', error);
+    logger.error('Error adding to cart:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -148,41 +121,55 @@ const addToCart = async (req, res) => {
 const updateCartItem = async (req, res) => {
   try {
     const { quantity } = req.body;
+    const userId = req.user.id;
+    const cartItemId = req.params.id;
     
     if (!quantity || quantity < 1) {
       return res.status(400).json({ message: 'Invalid quantity' });
     }
     
-    // In a real app, this would be req.user.id
-    const userId = "1";
+    // Get cart item and check stock
+    const [cartItems] = await pool.query(
+      `SELECT c.*, p.stock 
+       FROM cart_items c
+       JOIN products p ON c.product_id = p.id
+       WHERE c.id = ? AND c.user_id = ?`,
+      [cartItemId, userId]
+    );
     
-    // Check if user has a cart
-    if (!carts[userId]) {
-      return res.status(404).json({ message: 'Cart not found' });
+    if (cartItems.length === 0) {
+      return res.status(404).json({ message: 'Cart item not found' });
     }
     
-    // Find the cart item
-    const itemIndex = carts[userId].findIndex(item => item.id === req.params.id);
+    const cartItem = cartItems[0];
     
-    if (itemIndex === -1) {
-      return res.status(404).json({ message: 'Item not found in cart' });
-    }
-    
-    // Get the product to check stock
-    const product_id = carts[userId][itemIndex].product_id;
-    const product = products.find(p => p.id === product_id);
-    
-    // Check if quantity exceeds stock
-    if (quantity > product.stock) {
+    if (quantity > cartItem.stock) {
       return res.status(400).json({ message: 'Cannot add more than available stock' });
     }
     
     // Update quantity
-    carts[userId][itemIndex].quantity = quantity;
+    await pool.query(
+      'UPDATE cart_items SET quantity = ? WHERE id = ? AND user_id = ?',
+      [quantity, cartItemId, userId]
+    );
     
-    res.json(carts[userId]);
+    // Get updated cart items
+    const [updatedCart] = await pool.query(
+      `SELECT c.id, c.product_id, c.quantity, 
+       p.name, p.description, p.price, p.original_price, p.stock,
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       cat.name as category_name
+       FROM cart_items c
+       JOIN products p ON c.product_id = p.id
+       LEFT JOIN categories cat ON p.category_id = cat.id
+       WHERE c.user_id = ?`,
+      [userId]
+    );
+    
+    res.json(updatedCart);
   } catch (error) {
-    console.error('Error updating cart item:', error);
+    logger.error('Error updating cart item:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -194,27 +181,36 @@ const updateCartItem = async (req, res) => {
  */
 const removeFromCart = async (req, res) => {
   try {
-    // In a real app, this would be req.user.id
-    const userId = "1";
+    const userId = req.user.id;
+    const cartItemId = req.params.id;
     
-    // Check if user has a cart
-    if (!carts[userId]) {
-      return res.status(404).json({ message: 'Cart not found' });
+    // Delete cart item
+    const [result] = await pool.query(
+      'DELETE FROM cart_items WHERE id = ? AND user_id = ?',
+      [cartItemId, userId]
+    );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Cart item not found' });
     }
     
-    // Find the cart item
-    const itemIndex = carts[userId].findIndex(item => item.id === req.params.id);
+    // Get updated cart items
+    const [cartItems] = await pool.query(
+      `SELECT c.id, c.product_id, c.quantity, 
+       p.name, p.description, p.price, p.original_price, p.stock,
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       cat.name as category_name
+       FROM cart_items c
+       JOIN products p ON c.product_id = p.id
+       LEFT JOIN categories cat ON p.category_id = cat.id
+       WHERE c.user_id = ?`,
+      [userId]
+    );
     
-    if (itemIndex === -1) {
-      return res.status(404).json({ message: 'Item not found in cart' });
-    }
-    
-    // Remove the item
-    carts[userId].splice(itemIndex, 1);
-    
-    res.json(carts[userId]);
+    res.json(cartItems);
   } catch (error) {
-    console.error('Error removing from cart:', error);
+    logger.error('Error removing from cart:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -226,15 +222,17 @@ const removeFromCart = async (req, res) => {
  */
 const clearCart = async (req, res) => {
   try {
-    // In a real app, this would be req.user.id
-    const userId = "1";
+    const userId = req.user.id;
     
-    // Clear the cart
-    carts[userId] = [];
+    // Delete all cart items for user
+    await pool.query(
+      'DELETE FROM cart_items WHERE user_id = ?',
+      [userId]
+    );
     
     res.json({ message: 'Cart cleared' });
   } catch (error) {
-    console.error('Error clearing cart:', error);
+    logger.error('Error clearing cart:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

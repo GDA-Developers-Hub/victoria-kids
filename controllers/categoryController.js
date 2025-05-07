@@ -111,6 +111,26 @@ const getCategoryBySlug = async (req, res) => {
 };
 
 /**
+ * @desc    Get a category by ID
+ * @route   GET /api/categories/:id
+ * @access  Private/Admin
+ */
+const getCategoryById = async (req, res) => {
+  try {
+    const category = categories.find(c => c.id === req.params.id);
+    
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    
+    res.json(category);
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+/**
  * @desc    Get products by category
  * @route   GET /api/categories/:slug/products
  * @access  Public
@@ -357,6 +377,7 @@ const getAdminCategories = async (req, res) => {
 module.exports = {
   getCategories,
   getCategoryBySlug,
+  getCategoryById,
   getProductsByCategory,
   createCategory,
   updateCategory,

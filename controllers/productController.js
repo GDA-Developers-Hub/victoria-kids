@@ -164,11 +164,44 @@ const getProducts = async (req, res) => {
  */
 const getProductById = async (req, res) => {
   try {
-    const product = products.find(p => p.id === req.params.id);
+    const [products] = await pool.query(
+      `SELECT p.*, c.name as category_name,
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images
+       FROM products p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.id = ?`,
+      [req.params.id]
+    );
     
-    if (!product) {
+    if (products.length === 0) {
       return res.status(404).json({ message: 'Product not found' });
     }
+    
+    // Get product sizes
+    const [sizes] = await pool.query(
+      'SELECT size FROM product_sizes WHERE product_id = ?',
+      [req.params.id]
+    );
+    
+    // Get product colors
+    const [colors] = await pool.query(
+      'SELECT name, code FROM product_colors WHERE product_id = ?',
+      [req.params.id]
+    );
+    
+    // Get product care instructions
+    const [careInstructions] = await pool.query(
+      'SELECT instruction FROM product_care_instructions WHERE product_id = ?',
+      [req.params.id]
+    );
+    
+    const product = {
+      ...products[0],
+      sizes: sizes.map(s => s.size),
+      colors: colors,
+      careInstructions: careInstructions.map(ci => ci.instruction)
+    };
     
     res.json(product);
   } catch (error) {
@@ -206,45 +239,82 @@ const createProduct = async (req, res) => {
       images
     } = req.body;
     
-    // Use the image URLs provided from frontend
-    // These URLs should be passed in the request body
-    const productImages = images ? JSON.parse(images).map(url => ({
-      image_url: url
-    })) : [];
+    // Begin transaction
+    const connection = await pool.getConnection();
+    await connection.beginTransaction();
     
-    // Create a new product
-    const newProduct = {
-      id: Date.now().toString(),
-      name,
-      description,
-      price: parseFloat(price),
-      originalPrice: parseFloat(originalPrice || price),
-      images: productImages,
-      category_id,
-      category_name: "Category Name", // In a real app, you'd fetch this from the database
-      stock: parseInt(stock),
-      rating: 0,
-      reviews: 0,
-      featured: featured === 'true',
-      is_new: is_new === 'true',
-      is_budget: is_budget === 'true',
-      is_luxury: is_luxury === 'true',
-      sizes: sizes ? sizes.split(',') : [],
-      colors: colors ? colors.split(',') : [],
-      material,
-      age_range,
-      care_instructions: care_instructions ? care_instructions.split(',') : [],
-      safety_info,
-      origin,
-      warranty
-    };
-    
-    // In a real app, you'd save to database
-    products.push(newProduct);
-    
-    res.status(201).json(newProduct);
+    try {
+      // Insert the product
+      const [productResult] = await connection.query(
+        `INSERT INTO products (
+          name, description, price, original_price, category_id,
+          stock, featured, is_new, is_budget, is_luxury
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          name,
+          description,
+          parseFloat(price),
+          parseFloat(originalPrice || price),
+          category_id,
+          parseInt(stock) || 0,
+          featured === 'true' ? 1 : 0,
+          is_new === 'true' ? 1 : 0,
+          is_budget === 'true' ? 1 : 0,
+          is_luxury === 'true' ? 1 : 0
+        ]
+      );
+      
+      const productId = productResult.insertId;
+      
+      // Process and save image URLs from Firebase
+      if (images && productId) {
+        const imageUrls = typeof images === 'string' ? JSON.parse(images) : images;
+        
+        if (Array.isArray(imageUrls) && imageUrls.length > 0) {
+          for (let i = 0; i < imageUrls.length; i++) {
+            // Set the first image as primary
+            const isPrimary = i === 0 ? 1 : 0;
+            
+            await connection.query(
+              `INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?)`,
+              [productId, imageUrls[i], isPrimary]
+            );
+          }
+        }
+      }
+      
+      // Commit the transaction
+      await connection.commit();
+      
+      // Fetch the complete product with images
+      const [productData] = await pool.query(
+        `SELECT p.*, c.name as category_name FROM products p
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.id = ?`,
+        [productId]
+      );
+      
+      const [productImages] = await pool.query(
+        `SELECT id, image_url, is_primary FROM product_images WHERE product_id = ?`,
+        [productId]
+      );
+      
+      const newProduct = {
+        ...productData[0],
+        images: productImages
+      };
+      
+      res.status(201).json(newProduct);
+    } catch (err) {
+      // If there's an error, roll back the transaction
+      await connection.rollback();
+      throw err;
+    } finally {
+      // Release the connection
+      connection.release();
+    }
   } catch (error) {
-    console.error('Error creating product:', error);
+    logger.error('Error creating product:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

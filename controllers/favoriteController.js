@@ -17,7 +17,10 @@ const getUserFavorites = async (req, res) => {
     
     const [favorites] = await pool.query(
       `SELECT f.id, f.product_id, p.name, p.description, p.price, p.original_price, 
-       p.image, c.name as category_name, p.stock, p.rating, p.reviews, 
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       c.name as category_name, p.stock, p.rating,
+       (SELECT COUNT(*) FROM product_reviews WHERE product_id = p.id AND status = 'approved') as reviews,
        p.featured, p.is_new, p.is_budget, p.is_luxury
        FROM favorites f
        JOIN products p ON f.product_id = p.id
@@ -76,7 +79,10 @@ const addToFavorites = async (req, res) => {
     // Get the newly added favorite with product details
     const [newFavorite] = await pool.query(
       `SELECT f.id, f.product_id, p.name, p.description, p.price, p.original_price, 
-       p.image, c.name as category_name, p.stock, p.rating, p.reviews, 
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       c.name as category_name, p.stock, p.rating,
+       (SELECT COUNT(*) FROM product_reviews WHERE product_id = p.id AND status = 'approved') as reviews,
        p.featured, p.is_new, p.is_budget, p.is_luxury
        FROM favorites f
        JOIN products p ON f.product_id = p.id
@@ -115,7 +121,10 @@ const removeFromFavorites = async (req, res) => {
     // Get product info before removing
     const [product] = await pool.query(
       `SELECT p.id as product_id, p.name, p.description, p.price, p.original_price, 
-       p.image, c.name as category_name, p.stock, p.rating, p.reviews, 
+       (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as image,
+       (SELECT JSON_ARRAYAGG(image_url) FROM product_images WHERE product_id = p.id) as images,
+       c.name as category_name, p.stock, p.rating,
+       (SELECT COUNT(*) FROM product_reviews WHERE product_id = p.id AND status = 'approved') as reviews,
        p.featured, p.is_new, p.is_budget, p.is_luxury
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id

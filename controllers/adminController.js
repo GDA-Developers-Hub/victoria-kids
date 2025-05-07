@@ -51,21 +51,36 @@ const getDashboardStats = async (req, res) => {
       LIMIT 6`
     );
     
-    // Get top products
-    const [topProducts] = await pool.query(
+    // Get top products - basic info
+    const [topProductsBasic] = await pool.query(
       `SELECT 
         p.id, 
         p.name, 
-        SUM(oi.quantity) as total_sold, 
-        p.image_url
+        SUM(oi.quantity) as total_sold
       FROM order_items oi
       JOIN products p ON oi.product_id = p.id
       JOIN orders o ON oi.order_id = o.id
       WHERE o.payment_status = "paid"
-      GROUP BY p.id, p.name, p.image_url
+      GROUP BY p.id, p.name
       ORDER BY total_sold DESC
       LIMIT 3`
     );
+    
+    // Get images for each top product
+    const topProducts = [];
+    for (const product of topProductsBasic) {
+      const [productImages] = await pool.query(
+        `SELECT image_url FROM product_images 
+         WHERE product_id = ? AND is_primary = 1
+         LIMIT 1`,
+        [product.id]
+      );
+      
+      topProducts.push({
+        ...product,
+        image_url: productImages.length > 0 ? productImages[0].image_url : null
+      });
+    }
     
     res.json({
       total_sales,
