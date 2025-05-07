@@ -58,8 +58,51 @@ const adminRoutes = require("./routes/adminRoutes")
 const paymentRoutes = require("./routes/paymentRoutes")
 const mediaRoutes = require("./routes/mediaRoutes")
 
-// Middleware
-app.use(cors())
+// CORS Configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow all localhost origins with any port
+    const allowedOrigins = [
+      /^http:\/\/localhost(:[0-9]+)?$/,
+      /^http:\/\/127\.0\.0\.1(:[0-9]+)?$/,
+      'https://victoriababyshop.co.ke',
+      'https://www.victoriababyshop.co.ke',
+      process.env.FRONTEND_URL, // From env if specified
+      process.env.ADMIN_FRONTEND_URL // From env if specified
+    ].filter(Boolean); // Remove undefined/null values
+    
+    // No origin (like mobile apps, curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if the origin matches any of our allowed patterns
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      }
+      // If it's a regex pattern
+      return allowedOrigin.test(origin);
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true, // Allow cookies to be sent with requests
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Log CORS settings
+logger.info('CORS configured with allowed origins: localhost, victoriababyshop.co.ke, and configured frontend URLs');
+
+// Other middleware
 app.use(express.json())
 app.use(morgan("dev"))
 
